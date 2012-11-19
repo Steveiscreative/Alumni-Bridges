@@ -8,10 +8,18 @@ class Admins extends CI_Model
 	 * ---------------------------------------
 	 * 
 	 */
-	function get_alumni()
+	function get_alumni($num=20, $start=0)
 	{
-		$query=$this->db->query("SELECT * FROM alumni");
+
+		$query=$this->db->query("SELECT * FROM alumni LIMIT $start, $num");
 		return $query->result_array();
+	}
+
+	function get_alumni_count()
+	{
+		$this->db->select('id')->from('alumni'); 
+		$query = $this->db->get(); 
+		return $query->num_rows(); 
 	}
 
 	function get_alumnus($id)
@@ -19,6 +27,7 @@ class Admins extends CI_Model
 		$query = $this->db->query("SELECT * FROM alumni WHERE id = $id");
 		return $query->first_row('array');
 	}
+
 	
 	function add_alumni($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment)
 	{
@@ -44,10 +53,16 @@ class Admins extends CI_Model
 	 * 
 	 */
 	
-	function get_admins()
+	function get_admins($num=20, $start=0)
+	{
+		$query=$this->db->query("SELECT * FROM admin LIMIT $start, $num");
+		return $query->result_array();
+	}
+
+	function get_admin_count()
 	{
 		$query=$this->db->query("SELECT * FROM admin");
-		return $query->result_array();
+		return $query->num_rows();
 	}
 
 	function get_admin($id)
@@ -76,22 +91,29 @@ class Admins extends CI_Model
 		$query = $this->db->query("CALL sp_delete_admin($id)");
 	}
 
+
 	/**
 	 * Donation Models
 	 * ---------------------------------------
 	 */
 
-	function get_donations() 
+	function get_donations($num=20, $start=0) 
 	{
-		$query = $this->db->query('
+		$query = $this->db->query("
 			SELECT donations.id, alumni.first_name, alumni.last_name, donations.date_donated, donations.donation_amount FROM alumni_donations 
 			LEFT JOIN alumni 
 			ON alumni_donations.student_id = alumni.student_id
 			LEFT JOIN donations
 			ON alumni_donations.donation_id = donations.id
-			ORDER BY id DESC
-		');
+			ORDER BY id DESC LIMIT $start, $num
+		");
 		return $query->result_array();
+	}
+
+	function get_donation_count()
+	{
+		$query= $this->db->query('SELECT id FROM alumni_donations');
+		return $query->num_rows();
 	}
 
 	function add_donations($student_id,$donation_amount, $payment_type, $date_donated)
@@ -178,7 +200,7 @@ class Admins extends CI_Model
 	 * ---------------------------------------
 	 */
 
-	function alumni_search($terms)
+	function alumni_search($terms, $num=20, $start=0)
 	{
 		$this->db->like('first_name',$terms);
 		$this->db->or_like('last_name', $terms);
@@ -186,9 +208,22 @@ class Admins extends CI_Model
 		$this->db->or_like('department', $terms);
 		$this->db->or_like('student_id', $terms);
 		$this->db->or_like('zip_code', $terms);
+		$this->db->limit($num,$start);
 		$query = $this->db->get('alumni');
+		$count = $query->num_rows(); 
 		return $query->result_array(); 
 	}
 
+	function advanced_search()
+	{
+		// Advanced Search 
+	}
+
+	/**
+	 * Reports
+	 * ---------------------------------------
+	 */
+
 }
+
 ?>

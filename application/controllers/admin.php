@@ -1,7 +1,4 @@
 <?php 
-/**
- * 
- */
 class Admin extends CI_Controller
 {
 	
@@ -11,9 +8,23 @@ class Admin extends CI_Controller
 		$this->load->model('admins');
 	}
 
-	function dashboard()
+	/**
+	 * Dashboard 
+	 * ---------------------------------------
+	 */
+	
+	function dashboard($start=0)
 	{	
-		$data['alumni']=$this->admins->get_alumni();
+		$data['alumni']=$this->admins->get_alumni(20,$start);
+
+		// Pagination 
+		$this->load->library('pagination');
+		$config['base_url']=base_url().'index.php/admin/dashboard';
+		$config['total_rows']=$this->admins->get_alumni_count();
+		$config['per_page']=20; 
+		$this->pagination->initialize($config); 
+		$data['pages']=$this->pagination->create_links();
+
 		$this->load->view('inc/header.inc.php');
 		$this->load->view('dashboard',$data);
 		$this->load->view('inc/footer.inc.php');
@@ -57,8 +68,6 @@ class Admin extends CI_Controller
 
 		if($_POST)
 		{	
-
-
 			$alumni_data=array(
 				'first_name'=>$_POST['first_name'],
 				'last_name'=>$_POST['last_name'],
@@ -90,9 +99,18 @@ class Admin extends CI_Controller
 	 * ---------------------------------------
 	 */
 	
-	function manage_admins()
+	function manage_admins($start=0)
 	{
-		$data['admins']=$this->admins->get_admins();
+		$data['admins']=$this->admins->get_admins(25, $start);
+
+		// Pagination 
+		$this->load->library('pagination');
+		$config['base_url']=base_url().'index.php/admin/manage_admins';
+		$config['total_rows']=$this->admins->get_admin_count();
+		$config['per_page']=25; 
+		$this->pagination->initialize($config); 
+		$data['pages']=$this->pagination->create_links();
+
 		$this->load->view('inc/header.inc.php');
 		$this->load->view('administrators',$data);
 		$this->load->view('inc/footer.inc.php');
@@ -162,7 +180,8 @@ class Admin extends CI_Controller
 	}
 
 	/**
-	 * Degrees 
+	 * Degrees Controllers
+	 * ---------------------------------------
 	 */
 
 	function degrees()
@@ -194,7 +213,8 @@ class Admin extends CI_Controller
 	}
 
 	/**
-	 * Department
+	 * Department Controllers 
+	 * ---------------------------------------
 	 */
 
 	function departments()
@@ -247,11 +267,21 @@ class Admin extends CI_Controller
 
 	/**
 	 * Donations
+	 * ---------------------------------------
 	 */
 	
-	function donations()
+	function donations($start=0)
 	{
-		$data['donations']=$this->admins->get_donations(); 
+		$data['donations']=$this->admins->get_donations(25, $start);
+
+		// Pagination
+		$this->load->library('pagination');
+		$config['base_url']=base_url().'index.php/admin/donations';
+		$config['total_rows']=$this->admins->get_donation_count();
+		$config['per_page']=25; 
+		$this->pagination->initialize($config); 
+		$data['pages']=$this->pagination->create_links();
+
 		$this->load->view('inc/header.inc.php'); 
 		$this->load->view('donations', $data);
 		$this->load->view('inc/footer.inc.php'); 
@@ -279,16 +309,39 @@ class Admin extends CI_Controller
 		}
 	}
 
-	function search()
+	/**
+	 * Search
+	 * ---------------------------------------
+	 */
+	
+	function search($start=0)
 	{
 		$terms = $_GET['q'];
-		$data['alumni']=$this->admins->alumni_search($terms);
+		$data['alumni']=$this->admins->alumni_search($terms, 5 ,$start);
+
+		// Pagination 
+		$this->load->library('pagination');
+		$config['base_url']=base_url().'index.php/admin/search';
+		//$config['page_query_string'] = TRUE;
+		$config['per_page']=5; 
+		$this->pagination->initialize($config); 
+		$data['pages']=$this->pagination->create_links();
+
 		$this->load->view('inc/header.inc.php');
 		$this->load->view('dashboard', $data);
 		$this->load->view('inc/footer.inc.php');
-
 		
-		
+		function advanced()
+		{
+			$this->load->view('inc/header.inc.php');
+			$this->load->view('dashboard', $data);
+		$this->load->view('inc/footer.inc.php');
+		}
 	}
+
+	/**
+	 * Reports 
+	 * ---------------------------------------
+	 */
 
 }

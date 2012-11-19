@@ -2,7 +2,6 @@
 
 # To Do 
 - Add Error/Success Messages
-- Delete Alumni 
 - Access Control 
 - Pagination
 - Sort Alumni 

@@ -44,6 +44,11 @@ class Admins extends CI_Model
 		$this->db->update('alumni', $data);
 	}
 
+	function delete_alumni($id)
+	{
+		$query = $this->db->query("CALL sp_delete_alumni($id)");
+	}
+
 	/**
 	 * Admins Models
 	 * ---------------------------------------
@@ -222,7 +227,37 @@ class Admins extends CI_Model
 	/**
 	 * Reports
 	 * ---------------------------------------
+	 * get total donations of the year
+	 * - total donations
+	 * - total amount 
+	 * Donation Breakdown by month
+	 * Top three alumni donations
+	 * Donations by class
+	 *
 	 */
+	
+	function report_total_donations($year)
+	{
+			
+	}
+
+	function donations_by_month()
+	{
+
+	}
+
+	/**
+	 * 
+	 * [SELECT COUNT(id) FROM donations where YEAR(date_donated) = 2012
+	 * @param  [type] $year [description]
+	 * @return [type]
+	 * 
+	 */
+	
+	function report_donations_count($year)
+	{
+
+	}
 
 }
 

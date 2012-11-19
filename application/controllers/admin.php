@@ -88,6 +88,7 @@ class Admin extends CI_Controller
 			$data['valid_departments']=$this->admins->get_valid_departments();
 			$data['valid_degrees']=$this->admins->get_valid_degrees();
 			$data['alumni']=$this->admins->get_alumnus($id);
+
 			$this->load->view('inc/header.inc.php');
 			$this->load->view('update_alumni',$data);
 			$this->load->view('inc/footer.inc.php');
@@ -133,6 +134,12 @@ class Admin extends CI_Controller
 			$this->load->view('add_admin');
 			$this->load->view('inc/footer.inc.php');
 		}
+	}
+
+	function deletealumni($id)
+	{
+		$this->admins->delete_alumni($id);
+		redirect(base_url().'index.php/admin/dashboard');
 	}
 
 	function admin_profile($id)
@@ -330,18 +337,13 @@ class Admin extends CI_Controller
 		$this->load->view('inc/header.inc.php');
 		$this->load->view('dashboard', $data);
 		$this->load->view('inc/footer.inc.php');
-		
-		function advanced()
-		{
-			$this->load->view('inc/header.inc.php');
-			$this->load->view('dashboard', $data);
-		$this->load->view('inc/footer.inc.php');
-		}
 	}
 
 	/**
 	 * Reports 
 	 * ---------------------------------------
 	 */
+
+
 
 }

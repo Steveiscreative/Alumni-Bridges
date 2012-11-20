@@ -270,8 +270,11 @@ class Admins extends CI_Model
 	function donations_by_month_breakdown($year)
 	{
 		// SELECT MONTH(date_donated), SUM(donation_amount) FROM donations WHERE YEAR(date_donated) = $year GROUP BY MONTH(date_donated)
+	}
 
-
+	function donations_by_department_breakdown($year)
+	{
+		// SELECT MONTH(date_donated), SUM(donation_amount) FROM donations WHERE YEAR(date_donated) = $year GROUP BY MONTH(date_donated)
 	}
 	
 	function report_donations_count($year)

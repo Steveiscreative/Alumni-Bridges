@@ -329,7 +329,6 @@ class Admin extends CI_Controller
 		// Pagination 
 		$this->load->library('pagination');
 		$config['base_url']=base_url().'index.php/admin/search';
-		//$config['page_query_string'] = TRUE;
 		$config['per_page']=5; 
 		$this->pagination->initialize($config); 
 		$data['pages']=$this->pagination->create_links();
@@ -344,6 +343,10 @@ class Admin extends CI_Controller
 	 * ---------------------------------------
 	 */
 
+	function reports() 
+	{
+
+	}
 
 
 }

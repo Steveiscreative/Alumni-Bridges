@@ -343,9 +343,14 @@ class Admin extends CI_Controller
 	 * ---------------------------------------
 	 */
 
-	function reports() 
+	function reports($year) 
 	{
+		if( !isset($year) ) 
+		{
+			$year = date('Y');
+		}
 
+		$data['donation_total']=$this->admins->report_total_donation($year);
 	}
 
 

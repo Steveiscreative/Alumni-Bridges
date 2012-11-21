@@ -1,6 +1,7 @@
 # This is my README
 
 # To Do 
+- Redesign frontend
 - Add Error/Success Messages
 - Access Control 
 - Pagination

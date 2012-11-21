@@ -29,11 +29,11 @@ class Admins extends CI_Model
 	}
 
 	
-	function add_alumni($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment)
+	function add_alumni($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment, $graduation_year)
 	{
 	
 		$this->load->helper('array');
-		$query=$this->db->query("CALL sp_add_alumni($student_id, '$first_name','$last_name','$address', '$city', '$state', '$zip_code', '$email', '$telephone', '$degree', '$deparment')");
+		$query=$this->db->query("CALL sp_add_alumni($student_id, '$first_name','$last_name','$address', '$city', '$state', '$zip_code', '$email', '$telephone', '$degree', '$deparment', '$graduation_year')");
 		$row = $query->row_array();
 		echo random_element($row);
 	}
@@ -47,6 +47,42 @@ class Admins extends CI_Model
 	function delete_alumni($id)
 	{
 		$query = $this->db->query("CALL sp_delete_alumni($id)");
+	}
+
+	/**
+	 * Social Media Models 
+	 * ---------------------------------------
+	 * 1) get all social media
+	 * 2) Add New Social Media Column
+	 * 3) Alumni Add Social Media
+	 * 
+	 */
+	function get_all_social_media()
+	{
+		$query=$this->db->query("SELECT * FROM valid_social_media");
+		return $query->result_array(); 
+	}
+	
+	function add_social_media($social_media)
+	{
+		$ValidSM =$this->db->query("INSERT INTO valid_social_media (social_media) VALUES ('$social_media')");
+		$tableSM = strtolower($social_media);
+		$tableSM = str_replace(' ', '_', $tableSM);
+		$query=$query=$this->db->query("ALTER TABLE social_media ADD $tableSM VARCHAR(150) AFTER student_id");
+	}
+
+	function get_alumni_social_media($student_id)
+	{
+		$query=$this->db->query("SELECT * from social_media WHERE student_id = $student_id");
+		return $query->result_array(); 
+	}
+
+	function delete_social_media($social_media)
+	{
+		$tableSM = strtolower($social_media);
+		$tableSM = str_replace(' ', '_', $tableSM);
+		$this->db->query("DELETE FROM valid_social_media WHERE social_media = $social_media");
+		$this->db->query("ALTER TABLE social_media DROP COLUMN $tableSM");
 	}
 
 	/**
@@ -205,14 +241,15 @@ class Admins extends CI_Model
 	 * ---------------------------------------
 	 */
 
-	function alumni_search($terms, $num=20, $start=0)
+	function alumni_search($q, $department, $degree, $graduation_year, $num=20, $start=0)
 	{
-		$this->db->like('first_name',$terms);
-		$this->db->or_like('last_name', $terms);
-		$this->db->or_like('degree', $terms);
-		$this->db->or_like('department', $terms);
-		$this->db->or_like('student_id', $terms);
-		$this->db->or_like('zip_code', $terms);
+		$this->db->like('first_name',$q);
+		$this->db->or_like('last_name', $q);
+		$this->db->or_like('degree', $degree);
+		$this->db->or_like('department', $department);
+		$this->db->or_like('graduation_year', $graduation_year);
+		$this->db->or_like('student_id', $q);
+		$this->db->or_like('zip_code', $q);
 		$this->db->limit($num,$start);
 		$query = $this->db->get('alumni');
 
@@ -234,6 +271,8 @@ class Admins extends CI_Model
 		$this->db->or_like('');
 
 	}
+
+
 
 	/**
 	 * Reports

@@ -34,7 +34,7 @@
             Telephone: <input type="text" name="telephone" value="<?=$alumni['telephone']?>">
         </label>
         <label for="graduation_year">
-            Graduation Year: <input type="text" name="graduation_year">
+            Graduation Year: <input type="text" name="graduation_year" value="<?=$alumni['graduation_year']?>">
         </label>
         <label for="department">
             School Department : 
@@ -48,8 +48,8 @@
                 <?php } } ?>
 
             </select>
-
         </label>
+        <?=$socialMedia['face_book']?>
         <label for="degree">
             Degree : 
             <select name="degree" id="degree">
@@ -60,16 +60,20 @@
             </select>
         </label>
         <fieldset>
+        
             <legend>Social Media Links</legend>
-            <label for="facebook">
-                Facebook : <input type="text" name="facebook">
+        <?=$socialMedia["face_book"]; ?>
+           <?php
+                  foreach ( $valid_social_media as $row ) { ?>
+            <?php $tableName = str_replace(' ', '_',strtolower($row['social_media'])); ?>
+            
+            <label for="<?=str_replace(' ', '_',strtolower($row['social_media']))?>">
+                <?=$row['social_media'];?> : 
+                <input type="text" name="<?=$tableName?>" value="<?=$smRow[$row[$tableName]]?>" >
             </label>
-            <label for="twitter">
-                Twitter: <input type="text" name="twitter">
-            </label>
-            <label for="linkedIn">
-                LinkedIn : <input type="text" name="linkedin">
-            </label>
+            <?php } ?>
+            
+            
         </fieldset>
         <input type="submit" class="btn" value="Add Alumni">
     </form>

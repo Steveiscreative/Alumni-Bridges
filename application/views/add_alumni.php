@@ -55,7 +55,7 @@
                 <?php } ?>
             </select>
         </label>
-        <fieldset>
+        <!-- <fieldset>
             <legend>Social Media Links</legend>
             <label for="facebook">
                 Facebook : <input type="text" name="facebook">
@@ -66,7 +66,7 @@
             <label for="linkedIn">
                 LinkedIn : <input type="text" name="linkedin">
             </label>
-        </fieldset>
+        </fieldset> -->
         <input type="submit" class="btn" value="Add Alumni">
     </form>
 </div>

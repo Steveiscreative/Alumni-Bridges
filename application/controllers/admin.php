@@ -50,12 +50,15 @@ class Admin extends CI_Controller
 			$telephone=$_POST['telephone'];
 			$degree=$_POST['degree'];
 			$deparment=$_POST['school_department'];
+			$graduation_year=$_POST['graduation_year'];
 
-			$this->admins->add_alumni($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment);
+			$this->admins->add_alumni($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment,$graduation_year);
 			
 		} else {
 			$data['valid_departments']=$this->admins->get_valid_departments();
+			$data['valid_social_media']=$this->admins->get_all_social_media();
 			$data['valid_degrees']=$this->admins->get_valid_degrees();
+
 			$this->load->view('inc/header.inc.php');
 			$this->load->view('add_alumni', $data);
 			$this->load->view('inc/footer.inc.php');
@@ -78,17 +81,26 @@ class Admin extends CI_Controller
 				'email'=>$_POST['email'],
 				'telephone'=>$_POST['telephone'],
 				'degree'=>$_POST['degree'],
-				'department'=>$_POST['department']
+				'department'=>$_POST['department'],
+
 			);
 
 			$this->admins->update_alumni($id, $alumni_data);
 
 		} 
+			// Get Student ID
+			$query=$this->db->query("SELECT student_id FROM alumni where id = $id");
+			$data = $query->first_row('array');
+			$student_id = $data['student_id'];
 
+			// Pass Info 
 			$data['valid_departments']=$this->admins->get_valid_departments();
+			$data['socialMedia']=$this->admins->get_alumni_social_media($student_id);
+			$data['valid_social_media']=$this->admins->get_all_social_media();
 			$data['valid_degrees']=$this->admins->get_valid_degrees();
 			$data['alumni']=$this->admins->get_alumnus($id);
 
+			// Load Views 
 			$this->load->view('inc/header.inc.php');
 			$this->load->view('update_alumni',$data);
 			$this->load->view('inc/footer.inc.php');
@@ -112,6 +124,7 @@ class Admin extends CI_Controller
 		$this->pagination->initialize($config); 
 		$data['pages']=$this->pagination->create_links();
 
+		// Load Views 
 		$this->load->view('inc/header.inc.php');
 		$this->load->view('administrators',$data);
 		$this->load->view('inc/footer.inc.php');
@@ -168,7 +181,8 @@ class Admin extends CI_Controller
 				'first_name'=>$_POST['first_name'],
 				'last_name'=>$_POST['last_name'],
 				'pwd'=> $password,
-				'role_id'=>$_POST['role_id']);
+				'role_id'=>$_POST['role_id']
+			);
 
 			$this->admins->update_admin($id,$data_admin);
 			$data['success'] = 1;
@@ -184,6 +198,36 @@ class Admin extends CI_Controller
 	{
 		$this->admins->delete_admin($id);
 		redirect(base_url().'index.php/admin/manage_admins');
+	}
+
+	/**
+	 * Social Media Controllers
+	 * ---------------------------------------
+	 */
+	
+	function social_media() 
+	{
+		$data['social_media']=$this->admins->get_all_social_media();
+		$this->load->view('inc/header.inc.php');
+		$this->load->view('social_media',$data);
+		$this->load->view('inc/footer.inc.php'); 
+	}
+
+	function add_socialmedia()
+	{
+
+		if($_POST)
+		{
+			$social_media = $_POST['social_media'];
+			$this->admins->add_social_media($social_media);
+			redirect(base_url().'index.php/admin/social_media/');
+		}
+		else {
+			$this->load->view('inc/header.inc.php');
+			$this->load->view('add_socialmedia');
+			$this->load->view('inc/footer.inc.php');
+		}
+
 	}
 
 	/**
@@ -289,6 +333,7 @@ class Admin extends CI_Controller
 		$this->pagination->initialize($config); 
 		$data['pages']=$this->pagination->create_links();
 
+		// Load Views
 		$this->load->view('inc/header.inc.php'); 
 		$this->load->view('donations', $data);
 		$this->load->view('inc/footer.inc.php'); 
@@ -323,8 +368,26 @@ class Admin extends CI_Controller
 	
 	function search($start=0)
 	{
-		$terms = $_GET['q'];
-		$data['alumni']=$this->admins->alumni_search($terms, 5 ,$start);
+		$q = $_GET['q'];
+		if(!isset($department)){
+			$department = $q;
+		} else {
+			$department = $_GET['department'];
+		}
+		if(!isset($degree)){
+			$degree = $q; 
+		} else {
+			$degree = $_GET['degree'];
+		}
+		if(!isset($graduation_year)){
+			$graduation_year = $q;
+		} else {
+			$graduation_year = $_GET['graduation_year'];
+		}
+
+		
+
+		$data['alumni']=$this->admins->alumni_search($q, $department, $degree, $graduation_year, 5 ,$start);
 
 		// Pagination 
 		$this->load->library('pagination');
@@ -337,6 +400,10 @@ class Admin extends CI_Controller
 		$this->load->view('dashboard', $data);
 		$this->load->view('inc/footer.inc.php');
 	}
+
+	
+	
+
 
 	/**
 	 * Reports 

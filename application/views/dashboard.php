@@ -1,3 +1,23 @@
+
+  <div class="advancedSearch">
+    <form action="<?=base_url()?>index.php/admin/search/" method="GET">
+        <input type="hidden" name="q" value="<?php echo $_GET['q']?>">
+        <label for="graduation_year">
+          Gradution Year <input type="text" name="graduation_year" value="">
+        </label>
+        <label for="department">
+          Department <input type="text" name="department" value="">
+        </label>
+        <label for="degree">
+          Degree <input type="text" name="degree" value="">
+        </label>
+    
+        <input type="submit" class="btn" value="Advanced Search">
+    </form>
+</div>
+
+    
+  
 <table id="databaseEntryTable">
   <thead>
     <tr>

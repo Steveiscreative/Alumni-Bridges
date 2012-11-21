@@ -70,62 +70,6 @@
             </aside>
 
             <div class="main-panel">
-
-                <!-- <div id="search-panel-section">
-                   <form class="form-search input-append">
-                      <input type="text"  id="appendedInputButton" class="input-larger span12">
-                      <button type="submit" type="button" class="btn">Search</button>
-                    </form>
-
-                    <div id="advanced-search">
-                        <h5><a href="#">Advanced Search</a></h5>
-                        <div id="advancedSearchPanel">
-                            hey
-                        </div>
-                    </div> 
-                </div>
-
-                <div id="filterSection">
-                    <span>Filter</span>
-
-                        <select class="filterByClass">
-                          <option>Graduation Year</option>
-                          <option>2012</option>
-                          <option>2011</option>
-                          <option>2010</option>
-                          <option>2009</option>
-                          <option>2008</option>
-                          <option>2007</option>
-                          <option>2006</option>
-                          <option>2005</option>
-                          <option>2004</option>
-                          <option>2003</option>
-                          <option>2002</option>
-                          <option>2001</option>
-                        </select>
-
-                        <select class="filterBySchool">
-                            <option>School/Department</option>
-                            <option>Fine and Preforming Arts</option>
-                            <option>Information Technology</option>
-                            <option>Computer Science</option>
-                            <option>English</option>
-                            <option>Business</option>
-                            <option>Teaching</option>
-                        </select>
-
-                        <select class="filterByDegree">
-                            <option>Degree</option>
-                            <option>B.A. in Performing Arts</option>
-                            <option>B.A. in Performing Arts</option>
-                            <option>B.S. in Computer Science</option>
-                            <option>B.S. in Biology</option>
-                            <option>Computer Science</option>
-                            <option>English</option>
-                            <option>Business</option>
-                            <option>Teaching</option>
-                        </select>
-                </div>-->
                 <div id="admin-bar">
 
                     <!--/================== Begin Filters ==================/--> 
@@ -174,7 +118,7 @@
 
                     <div id="search">
                         <form class="form-search input-append" action="<?=base_url()?>index.php/admin/search/" method="GET">
-                        <input type="text"  id="appendedInputButton" name="q">
+                        <input type="text"  id="appendedInputButton" name="q" >
                         <button type="submit" type="button" class="btn">Search</button>
                         </form>
                         <!-- <a id="advancedSearch" href="#">Advanced Search</a> --> 

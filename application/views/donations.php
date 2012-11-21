@@ -1,3 +1,5 @@
+
+  
 <table id="databaseEntryTable">
   <thead>
     <tr>

@@ -10,6 +10,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width">
         <link rel="stylesheet" href="styles/main.css">
+        <link rel="stylesheet" href="styles/jquery.idealforms.min.css">
         <script src="scripts/vendor/modernizr.min.js"></script>
         <link href='http://fonts.googleapis.com/css?family=Scada:400italic,400,700' rel='stylesheet' type='text/css'> 
     </head>
@@ -23,6 +24,7 @@
 
                 <nav class="main-nav">
                     <ul>
+                        <li><a href="#">Login | </a></li>
                         <li><a href="#">My Account</a></li>
                     </ul>
                 </nav>
@@ -39,49 +41,6 @@
 
                     <section class="app-entry-actions">
                         <div class="app-entry-sort">
-                            <form method="GET" action="">
-                                <span>Sort : </span>
-
-                                <select name="graduation_year">
-                                  <option>Graduation Year</option>
-                                  <option>2012</option>
-                                  <option>2011</option>
-                                  <option>2010</option>
-                                  <option>2009</option>
-                                  <option>2008</option>
-                                  <option>2007</option>
-                                  <option>2006</option>
-                                  <option>2005</option>
-                                  <option>2004</option>
-                                  <option>2003</option>
-                                  <option>2002</option>
-                                  <option>2001</option>
-                                </select>
-        
-                                <select name="department">
-                                    <option>School/Department</option>
-                                    <option>Fine and Preforming Arts</option>
-                                    <option>Information Technology</option>
-                                    <option>Computer Science</option>
-                                    <option>English</option>
-                                    <option>Business</option>
-                                    <option>Teaching</option>
-                                </select>
-
-                                <select name="degree">
-                                    <option>Degree</option>
-                                    <option>B.A. in Performing Arts</option>
-                                    <option>B.A. in Performing Arts</option>
-                                    <option>B.S. in Computer Science</option>
-                                    <option>B.S. in Biology</option>
-                                    <option>Computer Science</option>
-                                    <option>English</option>
-                                    <option>Business</option>
-                                    <option>Teaching</option>
-                                </select>
-
-                                <input type="submit">
-                            </form>
                         </div>
 
                          <div class="app-entry-search">
@@ -111,11 +70,29 @@
                         </div>
                     </section>
 
+                    <div class="alert warning">
+                        <span class="close"><i class="icon-remove"></i></span> Alumni was not created
+                    </div>
+
+                    <div class="alert success">
+                        <span class="close"><i class="icon-remove"></i></span> Alumni has been created
+                    </div>
+
                     <section class="app-table">
                         <table>
                             <thead>
                                 <tr>
-                                    <th>id</th>
+                                    <th>
+                                        <span class="sort">
+                                            <span class="sort-up">
+                                                <a href="#"><i class="icon-sort-up"></i></a>
+                                            </span>
+                                            <span class="sort-down">
+                                                <a href="#"><i class="icon-sort-down"></i></a>
+                                            </span>
+                                        </span>
+                                        id
+                                    </th>
                                     <th>first_name</th>
                                     <th>last_name</th>
                                     <th>street</th>
@@ -195,8 +172,9 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="add-alumni" colspan="14">
-                                         <a href="#"> <i class="icon-plus"></i> Add Alumni  </a>
+                                    <td class="alumni-actions" colspan="14">
+                                         <a href="#"><i class="icon-plus"></i> Add Alumni</a>
+                                         <a href="#"><i class="icon-group"></i> Mass Import Alumni</a>
                                     </td>
                                 </tr>    
                             </tbody>
@@ -224,6 +202,12 @@
                                     </span>
                                 </a>
                             </li>
+                             <li>
+                                <a href="#">
+                                    <span class="full-width-nav-item show">Donations</span>
+                                     <span class="mini-nav-item hide"><i class="icon-gift"></i></span>
+                                </a>
+                            </li>
                             <li>
                                 <a href="#">
                                     <span class="full-width-nav-item show">Admin</span>
@@ -236,6 +220,37 @@
                                     <span class="mini-nav-item hide"><i class="icon-bar-chart"></i></span>
                                 </a>
                             </li>
+                            <li>
+                                <a href="#">
+                                    <span class="full-width-nav-item show">Degrees</span>
+                                    <span class="mini-nav-item hide"><i class="icon-star"></i></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="full-width-nav-item show">Departments</span>
+                                    <span class="mini-nav-item hide"><i class="icon-book"></i></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="full-width-nav-item show">Payment Types</span>
+                                    <span class="mini-nav-item hide"><i class="icon-credit-card"></i></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="full-width-nav-item show">Social Media</span>
+                                    <span class="mini-nav-item hide"><i class="icon-twitter"></i></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#">
+                                    <span class="full-width-nav-item show">Roles</span>
+                                    <span class="mini-nav-item hide"><i class="icon-tasks"></i></span>
+                                </a>
+                            </li>
+
                         </ul>
                     </nav>
                     <a class="app-panel-view-tog" href="#">
@@ -262,6 +277,7 @@
         </script>
     
     <!-- build:js scripts/amd-app.js -->
+    <script src="scripts/jquery.idealforms.min.js"></script>
     <script data-main="scripts/main" src="scripts/vendor/require.js"></script>
     <!-- endbuild -->
     </body>

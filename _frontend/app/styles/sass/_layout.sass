@@ -102,9 +102,12 @@ header[role=banner]
 	.app-table
 		font-size: .9375em
 
+
 		table
-			margin: 2em 0
+			margin: 1em 0
 			width: 100%
+			@include border-top-left-radius(8px)
+			@include border-top-right-radius(8px)
 
 			th, td
 				text-align: left
@@ -115,5 +118,59 @@ header[role=banner]
 				&:last-child
 					border-right: none
 			th
-				@include background(linear-gradient(bottom, #e1e1e1, #fff))
-				
+				@include background(linear-gradient(bottom, #EBEBEB, #fff))
+				overflow: hidden
+
+				.sort
+					position: relative
+					width: 10px
+					height: 50px
+					padding-right: 10px
+					clear: right
+
+					.sort-down
+						position: absolute
+						top: 5px
+						left: 0
+
+					a
+						padding: 0
+						margin: 0
+						text-decoration: none 
+
+
+
+				&:first-child
+					@include border-top-left-radius(8px)
+				&:last-child
+					@include border-top-right-radius(8px)
+
+			td.alumni-actions
+				height: 50px
+
+				a
+					padding: 1em
+					@include border-radius(3px, 3px)
+
+					&:hover
+						@include box-shadow(#cacaca 1px 1px 3px)
+footer 
+	text-align: center
+	margin: 1em 0
+
+.alert 
+	padding: 1em
+	margin: 1em 0
+	@include border-radius(5px, 5px)
+
+	.close
+		margin-right: 1em
+		cursor: pointer
+
+	&.warning
+		background: #d03425
+		color: #fff
+
+	&.success
+		background: #25ae2b
+		color: #fff

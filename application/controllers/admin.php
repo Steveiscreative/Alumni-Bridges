@@ -15,7 +15,16 @@ class Admin extends CI_Controller
 	
 	function dashboard($start=0)
 	{	
-		$data['alumni']=$this->admins->get_alumni(20,$start);
+		if($_GET)
+		{
+			$orderby=$_GET['orderby'];
+			$order=$_GET['order']; 
+		} else {
+			$orderby='id';
+			$order='desc'; 
+		}
+
+		$data['alumni']=$this->admins->get_alumni(20,$start, $orderby, $order);
 
 		// Pagination 
 		$this->load->library('pagination');
@@ -369,24 +378,28 @@ class Admin extends CI_Controller
 	function search($start=0)
 	{
 		$q = $_GET['q'];
-		if(!isset($department)){
-			$department = $q;
+
+		if( !isset($_GET['graduation_year']) || empty($_GET['graduation_year']) )
+		{
+			$graduation_year = NULL;
 		} else {
-			$department = $_GET['department'];
+			$graduation_year = $_GET['graduation_year'] ;
 		}
-		if(!isset($degree)){
-			$degree = $q; 
+
+		if( !isset($_GET['degree']) || empty($_GET['degree']) )
+		{
+			$degree = NULL; 
 		} else {
 			$degree = $_GET['degree'];
 		}
-		if(!isset($graduation_year)){
-			$graduation_year = $q;
-		} else {
-			$graduation_year = $_GET['graduation_year'];
-		}
-
 		
-
+		if( !isset($_GET['department']) || empty($_GET['department']) )
+		{
+			$department = NULL;
+		} else {
+			$department = $_GET['department'];
+		}
+		
 		$data['alumni']=$this->admins->alumni_search($q, $department, $degree, $graduation_year, 5 ,$start);
 
 		// Pagination 

@@ -8,10 +8,9 @@ class Admins extends CI_Model
 	 * ---------------------------------------
 	 * 
 	 */
-	function get_alumni($num=20, $start=0)
+	function get_alumni($num=20, $start=0, $orderby, $order)
 	{
-
-		$query=$this->db->query("SELECT * FROM alumni LIMIT $start, $num");
+		$query=$this->db->query("SELECT * FROM alumni ORDER BY $orderby $order LIMIT $start, $num ");
 		return $query->result_array();
 	}
 
@@ -48,6 +47,8 @@ class Admins extends CI_Model
 	{
 		$query = $this->db->query("CALL sp_delete_alumni($id)");
 	}
+
+
 
 	/**
 	 * Social Media Models 
@@ -243,35 +244,33 @@ class Admins extends CI_Model
 
 	function alumni_search($q, $department, $degree, $graduation_year, $num=20, $start=0)
 	{
-		$this->db->like('first_name',$q);
-		$this->db->or_like('last_name', $q);
-		$this->db->or_like('degree', $degree);
-		$this->db->or_like('department', $department);
-		$this->db->or_like('graduation_year', $graduation_year);
-		$this->db->or_like('student_id', $q);
-		$this->db->or_like('zip_code', $q);
+		/**
+		 * SELECT * FROM alumni
+		 *	WHERE CONCAT(first_name, ' ', last_name) LIKE '%dale dod%'
+		 *	AND graduation_year = '1999'
+		 *	AND department = 'Fine Arts'
+		 *	AND degree = 'Social Science'
+		 */
+		$this->db->like("CONCAT(first_name, ' ', last_name)",$q);
+		if($degree !== NULL)
+		{
+			$this->db->where('degree', $degree);
+		}
+		if($department !== NULL)
+		{
+			$this->db->where('department', $department);
+		}
+		if($graduation_year !== NULL)
+		{
+			$this->db->where('graduation_year', $graduation_year);
+		}
+		
+		
 		$this->db->limit($num,$start);
 		$query = $this->db->get('alumni');
 
 		return $query->result_array(); 
 	}
-
-	function advanced_search($school, $degree, $year)
-	{
-		// Advanced Search
-
-		/**
-		 * Advanced Search 
-		 * ---------------------------------------
-		 * school department
-		 * degree
-		 * year
-		 */
-		$this->db->like('degree', $degree);
-		$this->db->or_like('');
-
-	}
-
 
 
 	/**

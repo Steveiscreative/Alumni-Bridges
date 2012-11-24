@@ -1,7 +1,7 @@
 
   <div class="advancedSearch">
     <form action="<?=base_url()?>index.php/admin/search/" method="GET">
-        <input type="hidden" name="q" value="<?php echo $_GET['q']?>">
+        <input type="hidden" name="q" value="<?php if(isset($_GET['q']))   { echo $_GET['q']; }?>">
         <label for="graduation_year">
           Gradution Year <input type="text" name="graduation_year" value="">
         </label>

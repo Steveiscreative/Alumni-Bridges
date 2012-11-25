@@ -2,6 +2,7 @@
 
                     <div class="pagination">
                          <?=$pages?>
+                          <?=$rows?>
                     </div>
                 </div><!-- / #database-entries-section --> 
 

@@ -357,9 +357,8 @@ class Admin extends CI_Controller
 			$donation_amount = $_POST['donation_amount'];
 			$payment_type = $_POST['payment_type'];
 			$donation_date = $_POST['donation_date'];
-
 			$this->admins->add_donations($student_id,$donation_amount, $payment_type, $donation_date);
-			redirect(base_url().'index.php/admin/donations');
+			//redirect(base_url().'index.php/admin/donations/');
 		}
 		else {
 			$data['valid_payment_type']=$this->admins->get_payment_types();
@@ -400,14 +399,19 @@ class Admin extends CI_Controller
 			$department = $_GET['department'];
 		}
 		
-		$data['alumni']=$this->admins->alumni_search($q, $department, $degree, $graduation_year, 5 ,$start);
+		$data['alumni']=$this->admins->alumni_search($q, $department, $degree, $graduation_year, 5 , $start);
+
+		$numRows = $this->admins->getAffectedRows(); 
 
 		// Pagination 
-		$this->load->library('pagination');
-		$config['base_url']=base_url().'index.php/admin/search';
-		$config['per_page']=5; 
+		/* $this->load->library('pagination');
+		$config['base_url']=base_url().'index.php/admin/search/?q='.$q;
+		$config['per_page']=1; 
+		$config['total_rows'] = $numRows; 
+		$config['page_query_string'] = TRUE;
 		$this->pagination->initialize($config); 
 		$data['pages']=$this->pagination->create_links();
+		$data['rows']= $numRows; */
 
 		$this->load->view('inc/header.inc.php');
 		$this->load->view('dashboard', $data);
@@ -415,8 +419,6 @@ class Admin extends CI_Controller
 	}
 
 	
-	
-
 
 	/**
 	 * Reports 

@@ -1,7 +1,7 @@
  <?php 
 
 class Admins extends CI_Model
-{
+{	
 	
 	/**
 	 * Alumni Models
@@ -161,7 +161,9 @@ class Admins extends CI_Model
 	function add_donations($student_id,$donation_amount, $payment_type, $date_donated)
 	{
 		$this->load->helper('array');	
-		$this->db->query("CALL sp_add_donations($student_id, $donation_amount, '$payment_type', '$date_donated')");
+		$query=$this->db->query("CALL sp_add_donations($student_id, '$donation_amount', '$payment_type', '$date_donated')");
+		$row = $query->row_array();
+		echo random_element($row);
 	}
 
 	function get_payment_types()
@@ -252,88 +254,26 @@ class Admins extends CI_Model
 		 *	AND degree = 'Social Science'
 		 */
 		$this->db->like("CONCAT(first_name, ' ', last_name)",$q);
+
 		if($degree !== NULL)
 		{
 			$this->db->where('degree', $degree);
 		}
+
 		if($department !== NULL)
 		{
 			$this->db->where('department', $department);
 		}
+
 		if($graduation_year !== NULL)
 		{
 			$this->db->where('graduation_year', $graduation_year);
 		}
 		
 		
-		$this->db->limit($num,$start);
+		//$this->db->limit($num,$start);
 		$query = $this->db->get('alumni');
-
 		return $query->result_array(); 
 	}
-
-
-	/**
-	 * Reports
-	 * ---------------------------------------
-	 * get total donations of the year
-	 * - total donations
-	 * - total amount 
-	 * Donation Breakdown by month
-	 * Top three alumni donations
-	 * Donations by class
-	 *
-	 * other;
-	 * defaults to current year
-	 *
-	 */
-	
-	/**
-	 * Donation total for the year
-	 * @param  date $year 
-	 * @return Donation total for the year
-	 */
-	
-	function report_total_donations($year)
-	{
-		// SELECT SUM(donation_amount) FROM donations WHERE YEAR(date_donated) = $year
-		$query=$this->db->query();
-		return result_array();
-	}
-
-	/**
-	 * dontation break down by month
-	 */
-
-	function donations_by_month_breakdown($year)
-	{
-		// SELECT MONTH(date_donated), SUM(donation_amount) FROM donations WHERE YEAR(date_donated) = $year GROUP BY MONTH(date_donated)
-	}
-
-	function donations_by_department_breakdown($year)
-	{
-		// SELECT MONTH(date_donated), SUM(donation_amount) FROM donations WHERE YEAR(date_donated) = $year GROUP BY MONTH(date_donated)
-	}
-	
-	function report_donations_count($year)
-	{
-		// SELECT COUNT(donation_amount) FROM donations WHERE YEAR(date_donated) = $year
-	}
-
-
-	/**
-	 * GET Top Three Donators 
-	 * 
-	 * SELECT alumni.student_id, alumni.first_name, alumni.last_name, SUM(donations.donation_amount) FROM alumni_donations 
-	 * LEFT JOIN alumni 
-	 * ON alumni_donations.student_id = alumni.student_id
-	 * LEFT JOIN donations
-	 * ON alumni_donations.donation_id = donations.id
-	 * GROUP BY alumni.student_id
-	 * ORDER BY donations.donation_amount DESC 
-	 * LIMIT 0, 3
-	 */
-
-}
-
+} 
 ?>

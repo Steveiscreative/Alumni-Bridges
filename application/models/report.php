@@ -1,4 +1,4 @@
-x <?php 
+ <?php 
 
 class Report extends CI_Model
 {	
@@ -102,52 +102,57 @@ class Report extends CI_Model
 
 	function report_donations_list($year, $month, $department, $graduation_year)
 	{
-		/*
-		$this->db->select("alumni.first_name, alumni.last_name, SUM(donations.donation_amount) AS total");
+		//$department = str_replace($department,'+',' ');
+		$this->db->select('alumni.first_name, alumni.last_name, SUM(donations.donation_amount) AS total');
+		$this->db->from('alumni_donations');
 		$this->db->join('alumni', 'alumni_donations.student_id = alumni.student_id', 'left'); 
 		$this->db->join('donations', 'alumni_donations.donation_id = donations.id', 'left');
-		$this->db->where('YEAR(date_donated)', $year); 
+		$this->db->where('YEAR(date_donated)', $year);
 
-		if($month !== 0)
-		{
-			$this->db->where('MONTH(date_donated)', $month);
+		if($month !== NULL) { 
+			$this->db->where('MONTH(date_donated)', $month); 
 		}
 
-		if($department !== 0)
-		{
-			$this->db->where('department', $department);
+		if($department !== NULL ) {	
+			$this->db->where('department', $department); 
+		}
+		if($graduation_year !== NULL ) {
+			$this->db->where('graduation_year', $graduation_year); 
 		}
 
-		if($graduation_year !== 0)
-		{
-			$this->db->where('graduation_year', $graduation_year);
-		}
 		$query=$this->db->get();
-		return $query->result_array();
-		*/
-		$sql = "SELECT alumni.first_name, alumni.last_name, SUM(donations.donation_amount) AS total FROM alumni_donations";
-		$sql .= "LEFT JOIN alumni ON alumni_donations.student_id = alumni.student_id";
-		$sql .=	"LEFT JOIN donations ON alumni_donations.donation_id = donations.id";
-		$sql .=	"WHERE YEAR(date_donated) =".$year;
-		if($month !== 0) {
-			$sql .= "AND MONTH(date_donated) =".$month;	
-		}
-
-		if($department !== 0) {
-			$sql .= "AND department =".$department;
-		}
-
-		if($graduation_year !== 0) {
-			$sql .= "AND graduation_year =".$graduation_year;
-		}
-		$query=$this->db->query($sql);
 		return $query->result_array();
 	}
 
-	function reports_donation_total() 
+	function report_donations_sum($year, $month, $department, $graduation_year)
 	{
-		
-	} 
+		$this->load->helper('array');
+		$this->db->select('SUM(donations.donation_amount) AS total');
+		$this->db->from('alumni_donations');
+		$this->db->join('alumni', 'alumni_donations.student_id = alumni.student_id', 'left'); 
+		$this->db->join('donations', 'alumni_donations.donation_id = donations.id', 'left');
+		$this->db->where('YEAR(date_donated)', $year);
+
+		if($month !== NULL) { 
+			$this->db->where('MONTH(date_donated)', $month); 
+		}
+
+		if($department !== NULL ) {	
+			$this->db->where('department', $department); 
+		}
+		if($graduation_year !== NULL ) {
+			$this->db->where('graduation_year', $graduation_year); 
+		}
+
+		$query=$this->db->get();
+		$row = $query->row_array();
+		return random_element($row);
+
+	}
+
+	
+
+
     
 	
 

@@ -21,10 +21,6 @@
                 Department
                 <input type="text" name="department">
             </label>
-            <label for="payment_type">
-                Payment Type
-                <input name="payment_type" type="text">
-            </label>
             <input type="submit">
         </div>
     </form>

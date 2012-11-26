@@ -45,29 +45,32 @@ class Reports extends CI_Controller
 			}
 
 			if(!isset($_GET['department']) || empty($_GET['department'])) {
-				$department = 0;
+				$department = NULL;
 			} else {
 				$department = $_GET['department']; 
 			}
 
 			if(!isset($_GET['graduation_year']) || empty($_GET['graduation_year'])) {
-				$graduation_year = 0; 
+				$graduation_year = NULL; 
 			} else {
 				$graduation_year = $_GET['graduation_year']; 
 			}
 
 			if(!isset($_GET['month']) || empty($_GET['month'])){
-				$month = 0; 
+				$month = NULL; 
 			} else {
 				$month = $_GET['month']; 
 			}
+
+			$data['donators'] = $this->report->report_donations_list($year, $month, $department, $graduation_year);
+			$data['total_donations']=$this->report->report_donations_sum($year, $month, $department, $graduation_year);
+
 		}
-
-		$data['donators'] = $this->report->report_donations_list($year, $month, $department, $graduation_year); 
-
 		$this->load->view('inc/header.inc.php');
 		$this->load->view('report',$data);
 		$this->load->view('inc/footer.inc.php');
+	
+		
 	}
 
 }

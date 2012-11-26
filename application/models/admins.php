@@ -253,6 +253,7 @@ class Admins extends CI_Model
 		 *	AND department = 'Fine Arts'
 		 *	AND degree = 'Social Science'
 		 */
+		
 		$this->db->like("CONCAT(first_name, ' ', last_name)",$q);
 
 		if($degree !== NULL)

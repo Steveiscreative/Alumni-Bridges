@@ -276,5 +276,35 @@ class Admins extends CI_Model
 		$query = $this->db->get('alumni');
 		return $query->result_array(); 
 	}
+
+	/**
+	 * Email Listing
+	 * ---------------------------------------
+	 * 
+	 */
+	
+	function alumni_email_list($degree, $graduation_year, $zip_code )
+	{
+		$this->db->select('email');
+		$this->db->from('alumni');
+		if($degree !== NULL)
+		{
+			$this->db->where('degree', $degree);
+		}
+
+		if($graduation_year !== NULL)
+		{
+			$this->db->where('graduation_year', $graduation_year);
+		}
+
+		if($zip_code !== NULL)
+		{
+			$this->db->where('zip_code', $zip_code);
+		}
+
+		$query = $this->db->get();
+		return $query->result_array(); 
+
+	}
 } 
 ?>

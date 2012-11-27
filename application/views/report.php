@@ -36,10 +36,11 @@
  <h4>Total Donations</h4>
  <?=$count;?>
 
- <?php if (!isset($_GET['month'])): ?>
+ <?php if (!isset($_GET['month'])|| empty($_GET['month']) ): ?>
      <h4>Donations by Month</h4>
      <ul>
-     <?php foreach ($month as $row): ?>
+     <?php foreach ($month as $row): 
+        date_default_timezone_set('America/New_York');?>
          <li><?php echo date("F", mktime(0, 0, 0, $row['month']));?> : <?=$row['total']?></li>
      <?php endforeach ?>
      </ul>
@@ -53,9 +54,15 @@
  <?php endforeach ?>
 </ul>
 
- <h4>Donations By Graduation Class</h4>
+
+ <?php if (!isset($_GET['graduation_year']) || empty($_GET['graduation_year'])): ?>
+  <h4>Donations By Graduation Class</h4>
+     <?php foreach ($grad_year as $row): ?>
+        <li><?=$row['graduation_year']?> - <?=$row['total']?></li> 
+     <?php endforeach ?>
+ <?php endif ?>
  
- <?php if (!isset($_GET['department'])): ?>
+ <?php if (!isset($_GET['department']) || empty($_GET['department'])): ?>
  <h4>Donations by Department</h4>
  <ul>
  <?php foreach ($department as $row): ?>

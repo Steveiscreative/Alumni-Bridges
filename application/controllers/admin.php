@@ -8,6 +8,36 @@ class Admin extends CI_Controller
 		$this->load->model('admins');
 	}
 
+	function index()
+	{
+
+		$data['error']=0; 
+		if($_POST)
+		{
+			$this->load->model('user');
+			$email=$this->input->post('email', true);
+			$password=$this->input->post('password', true);
+			$user=$this->user->admin_login($email, $password);
+
+			if (!$user) {
+				$data['error']=1; 
+			} else {
+
+				$this->session->set_userdata('id', $user['id']);
+				$this->session->set_userdata('email', $user['email']);
+				$this->session->set_userdata('role_id', $user['role_id']);
+				redirect(base_url().'index.php/admin/dashboard');
+			}
+		}
+		$this->load->view('login', $data);
+	}
+
+	// function logout()
+	// {
+	// 	$this->session->sess_destroy();
+	// 	redirect(base_url().'index.php/admin');
+	// }
+
 	/**
 	 * Dashboard 
 	 * ---------------------------------------
@@ -401,38 +431,45 @@ class Admin extends CI_Controller
 		
 		$data['alumni']=$this->admins->alumni_search($q, $department, $degree, $graduation_year, 5 , $start);
 
-		$numRows = $this->admins->getAffectedRows(); 
-
-		// Pagination 
-		/* $this->load->library('pagination');
-		$config['base_url']=base_url().'index.php/admin/search/?q='.$q;
-		$config['per_page']=1; 
-		$config['total_rows'] = $numRows; 
-		$config['page_query_string'] = TRUE;
-		$this->pagination->initialize($config); 
-		$data['pages']=$this->pagination->create_links();
-		$data['rows']= $numRows; */
 
 		$this->load->view('inc/header.inc.php');
 		$this->load->view('dashboard', $data);
 		$this->load->view('inc/footer.inc.php');
 	}
 
-	
-
 	/**
-	 * Reports 
-	 * ---------------------------------------
+	 * Email Listing
+	 * 
 	 */
-
-	function reports($year) 
+	
+	function email_list()
 	{
-		if( !isset($year) ) 
+
+		if( !isset($_GET['degree']) || empty($_GET['degree']) )
 		{
-			$year = date('Y');
+			$degree = NULL;
+		} else {
+			$degree = $_GET['degree'] ;
 		}
 
-		$data['donation_total']=$this->admins->report_total_donation($year);
+		if( !isset($_GET['graduation_year']) || empty($_GET['graduation_year']) )
+		{
+			$graduation_year = NULL; 
+		} else {
+			$graduation_year = $_GET['graduation_year'];
+		}
+		
+		if( !isset($_GET['zip_code']) || empty($_GET['zip_code']) )
+		{
+			$zip_code = NULL;
+		} else {
+			$zip_code = $_GET['zip_code'];
+		}
+
+		$data['email']=$this->admins->alumni_email_list($degree, $graduation_year, $zip_code);
+		$this->load->view('inc/header.inc.php');
+		$this->load->view('email', $data);
+		$this->load->view('inc/footer.inc.php');
 	}
 
 

@@ -33,22 +33,41 @@
    
  <h4>Total Donations Amount</h4>
  <?=$total_donations?>
+ <h4>Total Donations</h4>
+ <?=$count;?>
+
+ <?php if (!isset($_GET['month'])): ?>
+     <h4>Donations by Month</h4>
+     <ul>
+     <?php foreach ($month as $row): ?>
+         <li><?php echo date("F", mktime(0, 0, 0, $row['month']));?> : <?=$row['total']?></li>
+     <?php endforeach ?>
+     </ul>
+ <?php endif ?>
+ 
+
+ <h4>Donation Payments Type Breakdown</h4>
+ <ul>
+ <?php foreach ($payment_type as $row): ?>
+     <li><?=$row['payment_type']?> - <?=$row["total"]?></li>
+ <?php endforeach ?>
+</ul>
+
+ <h4>Donations By Graduation Class</h4>
+ 
+ <?php if (!isset($_GET['department'])): ?>
+ <h4>Donations by Department</h4>
+ <ul>
+ <?php foreach ($department as $row): ?>
+     <li><?=$row['department']?> - <?=$row['total']?></li>
+ <?php endforeach; ?>
+ </ul>
+<?php endif ?>
+
  <h4>Donators</h4>
  <ul class="donators">
  <?php foreach ($donators as $row): ?>
     <li><?=$row['first_name']?> <?=$row['last_name']; ?> <span class="amount"><?=$row['total'];?></span> </li>
  <?php endforeach; ?>
  </ul>
- <h4>Donations by Month</h4>
-
-
- <h4>Donation Payment Count</h4>
-
- <h4>Donations By Graduation Class</h4>
- 
-
- <h4>Donations by Department</h4>
-
-
-  <h4>Top Donators</h4>
   

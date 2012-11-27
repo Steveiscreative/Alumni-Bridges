@@ -64,8 +64,13 @@ class Reports extends CI_Controller
 
 			$data['donators'] = $this->report->report_donations_list($year, $month, $department, $graduation_year);
 			$data['total_donations']=$this->report->report_donations_sum($year, $month, $department, $graduation_year);
-
+			$data['month']=$this->report->report_dontations_by_month($year, $department, $graduation_year);
+			$data['count']=$this->report->report_donations_count($year, $month, $department, $graduation_year);
+			$data['department']=$this->report->report_donations_by_department($year, $month, $graduation_year);
+			$data['payment_type']=$this->report->report_donation_by_payment_types($year, $month, $department, $graduation_year); 
+			
 		}
+
 		$this->load->view('inc/header.inc.php');
 		$this->load->view('report',$data);
 		$this->load->view('inc/footer.inc.php');

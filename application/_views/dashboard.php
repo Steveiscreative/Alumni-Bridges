@@ -37,7 +37,6 @@
     </tr>
   </thead>
   <tbody>
-
     <?php if (!isset($alumni)) {
         echo 'No alumni in database';
     } else { 
@@ -57,7 +56,10 @@
         <td><?=$row['department']?></td>
         <td><?=$row['donation_total']?></td>
     </tr><!-- entry --> 
-<?php } } ?>
+    <?php } } ?>
+  </tbody>
 </table>
-
+<div class="pagination">
+     <?=$pages?>
+</div>
 

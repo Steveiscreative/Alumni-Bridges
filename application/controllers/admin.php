@@ -32,12 +32,6 @@ class Admin extends CI_Controller
 		$this->load->view('login', $data);
 	}
 
-	// function logout()
-	// {
-	// 	$this->session->sess_destroy();
-	// 	redirect(base_url().'index.php/admin');
-	// }
-
 	/**
 	 * Dashboard 
 	 * ---------------------------------------
@@ -60,13 +54,14 @@ class Admin extends CI_Controller
 		$this->load->library('pagination');
 		$config['base_url']=base_url().'index.php/admin/dashboard';
 		$config['total_rows']=$this->admins->get_alumni_count();
-		$config['per_page']=20; 
+		$config['per_page']=10; 
 		$this->pagination->initialize($config); 
 		$data['pages']=$this->pagination->create_links();
 
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('dashboard',$data);
-		$this->load->view('inc/footer.inc.php');
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/dashboard.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 	}
 
 	/**
@@ -76,6 +71,9 @@ class Admin extends CI_Controller
 
 	function add_alumni()
 	{
+		$data['valid_departments']=$this->admins->get_valid_departments();
+		$data['valid_social_media']=$this->admins->get_all_social_media();
+		$data['valid_degrees']=$this->admins->get_valid_degrees();
 		if($_POST)
 		{
 			$student_id =$_POST['student_id']; 
@@ -91,22 +89,26 @@ class Admin extends CI_Controller
 			$deparment=$_POST['school_department'];
 			$graduation_year=$_POST['graduation_year'];
 
-			$this->admins->add_alumni($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment,$graduation_year);
-			
+			$data['results']=$this->admins->add_alumni($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment,$graduation_year);
+			$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/alumni/add.php',$data);
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
 		} else {
-			$data['valid_departments']=$this->admins->get_valid_departments();
-			$data['valid_social_media']=$this->admins->get_all_social_media();
-			$data['valid_degrees']=$this->admins->get_valid_degrees();
 
-			$this->load->view('inc/header.inc.php');
-			$this->load->view('add_alumni', $data);
-			$this->load->view('inc/footer.inc.php');
+			
+
+			$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/alumni/add.php',$data);
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
 		}
 
 	}
 
 	function alumni_profile($id)
 	{
+		$data['success']=0; 
 
 		if($_POST)
 		{	
@@ -121,18 +123,18 @@ class Admin extends CI_Controller
 				'telephone'=>$_POST['telephone'],
 				'degree'=>$_POST['degree'],
 				'department'=>$_POST['department'],
-
+				'graduation_year'=>$_POST['graduation_year']
 			);
 
 			$this->admins->update_alumni($id, $alumni_data);
-
+			$data['success']=1;
 		} 
 			// Get Student ID
 			$query=$this->db->query("SELECT student_id FROM alumni where id = $id");
 			$data = $query->first_row('array');
 			$student_id = $data['student_id'];
 
-			// Pass Info 
+			// Pass Info to views
 			$data['valid_departments']=$this->admins->get_valid_departments();
 			$data['socialMedia']=$this->admins->get_alumni_social_media($student_id);
 			$data['valid_social_media']=$this->admins->get_all_social_media();
@@ -140,9 +142,10 @@ class Admin extends CI_Controller
 			$data['alumni']=$this->admins->get_alumnus($id);
 
 			// Load Views 
-			$this->load->view('inc/header.inc.php');
-			$this->load->view('update_alumni',$data);
-			$this->load->view('inc/footer.inc.php');
+			$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/alumni/edit.php',$data);
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
 	}
 
 

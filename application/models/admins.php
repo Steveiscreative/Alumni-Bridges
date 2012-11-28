@@ -34,7 +34,7 @@ class Admins extends CI_Model
 		$this->load->helper('array');
 		$query=$this->db->query("CALL sp_add_alumni($student_id, '$first_name','$last_name','$address', '$city', '$state', '$zip_code', '$email', '$telephone', '$degree', '$deparment', '$graduation_year')");
 		$row = $query->row_array();
-		echo random_element($row);
+		return random_element($row);
 	}
 
 	function update_alumni($id, $data)

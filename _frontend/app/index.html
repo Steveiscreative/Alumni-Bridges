@@ -32,6 +32,7 @@
         </header>
 
         <div class="app-full-container">
+            
             <div id="main">
                 <div class="container"> 
 
@@ -54,9 +55,9 @@
                         <div class="app-advanced-search hide">
                             <h3>Advanced Search</h3>
                             <form action="<?=base_url()?>index.php/admin/search/" method="GET">
-
-                                <input type="hidden" name="q" value="<?php echo $_GET['q']?>">
-
+                                <fieldset>
+                                <input type="text" name="q" value="<?php if(isset($_GET['q']))   { echo $_GET['q']; }?>>">
+                                </fieldset>
                                 <fieldset>
                                      <label for="graduation_year">Gradution Year</label>
                                      <input type="text" name="graduation_year" value="">

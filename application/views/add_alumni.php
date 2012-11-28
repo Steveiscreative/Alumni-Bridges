@@ -55,18 +55,6 @@
                 <?php } ?>
             </select>
         </label>
-        <!-- <fieldset>
-            <legend>Social Media Links</legend>
-            <label for="facebook">
-                Facebook : <input type="text" name="facebook">
-            </label>
-            <label for="twitter">
-                Twitter: <input type="text" name="twitter">
-            </label>
-            <label for="linkedIn">
-                LinkedIn : <input type="text" name="linkedin">
-            </label>
-        </fieldset> -->
         <input type="submit" class="btn" value="Add Alumni">
     </form>
 </div>

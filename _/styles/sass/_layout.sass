@@ -1,0 +1,230 @@
+/* General Layout */
+.container 
+	padding: 1em 
+
+.clear_float
+	overflow: hidden
+
+.col
+	width: 40%
+	margin-left: 1em
+	display: inline-block
+	float: left
+
+label
+	display: block
+
+
+body.app-shell
+	width: 100%
+	height: 100%
+
+header[role=banner]
+	height: 50px
+	color: #fff
+	background: #151515
+
+	.branding
+		float: left
+
+	nav.main-nav
+		float: right
+
+		ul
+			padding: 0
+			margin: 0
+			list-style: none
+
+			li
+				display: inline
+
+				a
+					color: #ffff00
+					text-decoration: none
+
+
+.app-full-container
+	width: 100%
+	height: 100%
+
+#sidebar 
+	position: absolute
+	left: 0
+	display: block
+	width: 20%
+	height: 100%
+	border-right: 3px solid #ccc
+	@include transition-property(width)
+	@include transition-duration(1s)
+
+	&.app-mini-sidebar
+		width: 5%
+
+	.app-nav
+		ul
+			margin: 1em 0
+			padding: 0
+			list-style: none
+
+			li
+				padding: .5em
+				border-bottom: 1px #ccc solid
+
+				&:hover
+					background: #f2f2f2
+
+				a
+					color: #306cff
+					text-decoration: none
+					display: block
+
+@keyframes fadein
+	from 
+		opacity: 0
+	to 
+		opacity: 100%
+
+#main 
+	position: absolute
+	right: 0
+	width: 80%
+	height: 100%
+	overflow: scroll
+	@include transition-property(width)
+	@include transition-duration(1s)
+	animation-duration: 3s
+	-webkit-animation-duration: 3s
+	-webkit-animation-name: fadein
+
+	.container
+		padding: 1em 2em
+
+	&.app-full-view
+		width: 95%
+
+	header.app-header
+		overflow: hidden
+		position: relative
+
+		h1
+			width: 70%
+			float: left
+
+		.app-entry-search
+			float: right
+			width: 30%
+			margin-bottom: 1em
+			position: relative
+			top: 60px
+
+	&.reports
+		header.app-header
+			border-bottom: solid #ccc 1px
+			h1
+				width: 50%
+				float: left
+
+			.app-report-generation-options
+				width: 50%
+				float: right
+				
+				input[type=submit]
+					width: 84%
+					margin-left: 1.75em
+
+	.app-entry-actions
+		overflow: hidden
+
+		.app-entry-sort
+			float: left
+			width: 70%
+
+		.app-advanced-search
+			clear: both
+			background: #eeeeee
+			padding: .25em
+			@include border-radius(4px, 4px)
+			@include transition-property(all)	
+			@include transition-duration(1s)
+
+			h3, form
+				margin-left: 1em
+
+	.app-table
+		font-size: .9375em
+
+
+		table
+			margin: 1em 0
+			width: 100%
+			@include border-top-left-radius(8px)
+			@include border-top-right-radius(8px)
+
+			th, td
+				text-align: left
+				padding: 10px
+				border-right: 1px solid #cccccc
+				border-bottom: 1px solid #cccccc
+
+				&:last-child
+					border-right: none
+			th
+				@include background(linear-gradient(bottom, #EBEBEB, #fff))
+				overflow: hidden
+
+				.sort
+					position: relative
+					width: 10px
+					height: 50px
+					padding-right: 10px
+					clear: right
+
+					.sort-down
+						position: absolute
+						top: 5px
+						left: 0
+
+					a
+						padding: 0
+						margin: 0
+						text-decoration: none 
+
+
+
+				&:first-child
+					@include border-top-left-radius(8px)
+				&:last-child
+					@include border-top-right-radius(8px)
+
+			td.alumni-actions
+				height: 50px
+
+				a
+					padding: 1em
+					@include border-radius(3px, 3px)
+
+					&:hover
+						@include box-shadow(#cacaca 1px 1px 3px)
+footer 
+	padding: 2em 0
+	text-align: center
+
+.alert 
+	padding: 1em
+	margin: 1em 0
+	@include border-radius(5px, 5px)
+	opacity: 1
+	@include transition-property(opacity)	
+	@include transition-duration(2s)
+
+	.close
+		margin-right: 1em
+		cursor: pointer
+
+	&.warning
+		background: #d03425
+		color: #fff
+
+	&.success
+		background: #25ae2b
+		color: #fff

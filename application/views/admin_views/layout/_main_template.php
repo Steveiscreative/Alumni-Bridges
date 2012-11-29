@@ -156,7 +156,7 @@
 
         <footer>
             <small>
-               Alumni Bridges &copy; 2012
+                Steven Stephenson &copy; 2012 | Alumni Bridges
             </small>
         </footer>
 

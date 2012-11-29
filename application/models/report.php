@@ -242,6 +242,7 @@ class Report extends CI_Model
 	// LEFT JOIN alumni ON alumni_donations.student_id = alumni.student_id
 	// LEFT JOIN donations ON alumni_donations.donation_id = donations.id
 	// WHERE YEAR(date_donated) = $year GROUP BY alumni.graduation_year
+	
      function report_donation_by_grad_year($year, $month, $department)
     {
 

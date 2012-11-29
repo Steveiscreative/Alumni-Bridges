@@ -27,9 +27,10 @@ class Reports extends CI_Controller
 		$data['class_donations']=$this->report->donations_by_class_overview($getCurrentYear);
 
 		// Load Views 
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('reports_overview',$data);
-		$this->load->view('inc/footer.inc.php');
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/reports/overview.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 
 	}
 
@@ -72,9 +73,10 @@ class Reports extends CI_Controller
 			
 		}
 
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('report',$data);
-		$this->load->view('inc/footer.inc.php');
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/reports/report.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 	
 		
 	}

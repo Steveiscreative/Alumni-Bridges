@@ -33,8 +33,12 @@ class Admin extends CI_Controller
 	}
 
 	/**
-	 * Dashboard 
+	 * Alumni Controllers
 	 * ---------------------------------------
+	 * 1) Dashboard - Display all alumni in database 
+	 * 2) Add Alumni 
+	 * 3) Alumni Profile - Update Alumni Profile
+	 * 4) Delete Alumni
 	 */
 	
 	function dashboard($start=0)
@@ -64,11 +68,6 @@ class Admin extends CI_Controller
 		$this->load->view('admin_views/layout/footer.php');
 	}
 
-	/**
-	 * Alumni Controllers
-	 * ---------------------------------------
-	 */
-
 	function add_alumni()
 	{
 		$data['valid_departments']=$this->admins->get_valid_departments();
@@ -94,10 +93,8 @@ class Admin extends CI_Controller
 			$this->load->view('admin_views/alumni/add.php',$data);
 			$this->load->view('admin_views/layout/sidebar.php');
 			$this->load->view('admin_views/layout/footer.php');
+
 		} else {
-
-			
-
 			$this->load->view('admin_views/layout/header.php');
 			$this->load->view('admin_views/alumni/add.php',$data);
 			$this->load->view('admin_views/layout/sidebar.php');
@@ -148,6 +145,12 @@ class Admin extends CI_Controller
 			$this->load->view('admin_views/layout/footer.php');
 	}
 
+	function deletealumni($id)
+	{
+		$this->admins->delete_alumni($id);
+		redirect(base_url().'index.php/admin/dashboard');
+	}
+
 
 	/**
 	 * Admin Controllers
@@ -156,20 +159,22 @@ class Admin extends CI_Controller
 	
 	function manage_admins($start=0)
 	{
+		// Get Admin Info
 		$data['admins']=$this->admins->get_admins(25, $start);
 
 		// Pagination 
 		$this->load->library('pagination');
 		$config['base_url']=base_url().'index.php/admin/manage_admins';
 		$config['total_rows']=$this->admins->get_admin_count();
-		$config['per_page']=25; 
+		$config['per_page']=10; 
 		$this->pagination->initialize($config); 
 		$data['pages']=$this->pagination->create_links();
 
 		// Load Views 
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('administrators',$data);
-		$this->load->view('inc/footer.inc.php');
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/admin/view_all.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 	}
 
 	function add_admin()
@@ -180,22 +185,25 @@ class Admin extends CI_Controller
 			$first_name=$_POST['first_name'];
 			$last_name=$_POST['last_name'];
 			$pwd = $_POST['pwd'];
-			$role = $_POST['role'];
+			$role = $_POST['role_id'];
 
-			$this->admins->add_admin($email,$first_name, $last_name, $pwd,$role);
+			$data['results']=$this->admins->add_admin($email,$first_name, $last_name, $pwd,$role);
+
+			$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/admin/add.php',$data);
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
 		}
 		else {
-			$this->load->view('inc/header.inc.php');
-			$this->load->view('add_admin');
-			$this->load->view('inc/footer.inc.php');
+			$data['role']=$this->admins->get_roles();
+			$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/admin/add.php',$data);
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
 		}
 	}
 
-	function deletealumni($id)
-	{
-		$this->admins->delete_alumni($id);
-		redirect(base_url().'index.php/admin/dashboard');
-	}
+	
 
 	function admin_profile($id)
 	{	
@@ -229,17 +237,20 @@ class Admin extends CI_Controller
 			$this->admins->update_admin($id,$data_admin);
 			$data['success'] = 1;
 		}
-
+		$data['role']=$this->admins->get_roles();
+		$data['user_role']=$this->admins->get_user_role($id);
 		$data['admin']=$this->admins->get_admin($id);
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('update_admin',$data);
-		$this->load->view('inc/footer.inc.php');
+
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/admin/edit.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 	}
 
 	function deleteadmin($id)
 	{
 		$this->admins->delete_admin($id);
-		redirect(base_url().'index.php/admin/manage_admins');
+		redirect(base_url().'index.php/admin/manage_admins', 'refresh');
 	}
 
 	/**
@@ -280,9 +291,10 @@ class Admin extends CI_Controller
 	function degrees()
 	{
 		$data['valid_degrees']=$this->admins->get_valid_degrees(); 
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('degrees', $data);
-		$this->load->view('inc/footer.inc.php');
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/degrees/view_all.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 	}
 
 	function add_degree()
@@ -290,19 +302,43 @@ class Admin extends CI_Controller
 		if($_POST)
 		{
 			$degree = $_POST['degree'];
-			$this->admins->add_valid_degree($degree);
+			$data['results']=$this->admins->add_valid_degree($degree);
+			$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/degrees/add.php', $data);
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
+		} else {
+			$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/degrees/add.php');
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
 		}
-		
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('add_degree');
-		$this->load->view('inc/footer.inc.php');
+	}
+
+	function degree($id)
+	{	
+		$data['success'] = 0;
+
+		if($_POST) 
+		{	$data=array(
+				'degree' => $_POST['degree']); 
+			$this->admins->update_degree($id,$data);
+			$data['success'] = 1;
+		}
+
+		$data['valid_degree']=$this->admins->get_valid_degree($id);
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/degrees/edit.php', $data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 
 	}
 
 	function deletedegree($id)
 	{
 		$this->admins->delete_valid_degree($id);
-		redirect(base_url().'index.php/admin/degrees');
+		$data['redirect_url']=base_url()."index.php/admin/degrees";
+		$this->load->view('help/redirect.php',$data);
 	}
 
 	/**
@@ -314,9 +350,10 @@ class Admin extends CI_Controller
 	{
 		$data['valid_departments'] = $this->admins->get_valid_departments();
 
-		$this->load->view('inc/header.inc.php'); 
-		$this->load->view('departments', $data); 
-		$this->load->view('inc/footer.inc.php');
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/departments/view_all.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 	}
 
 	function add_department()
@@ -325,12 +362,17 @@ class Admin extends CI_Controller
 		if($_POST)
 		{
 			$department=$_POST['department'];
-			$this->admins->add_valid_department($department);
+			$data['results']=$this->admins->add_valid_department($department);
+			$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/departments/add.php', $data);
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
 		}
 
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('add_department');
-		$this->load->view('inc/footer.inc.php');
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/departments/add.php');
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 	}
 
 	function department($id)
@@ -345,9 +387,10 @@ class Admin extends CI_Controller
 		}
 
 		$data['valid_department']=$this->admins->get_valid_department($id);
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('update_department',$data);
-		$this->load->view('inc/footer.inc.php');
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/departments/edit.php', $data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 
 	}
 	
@@ -355,7 +398,8 @@ class Admin extends CI_Controller
 	function deletedepartment($id)
 	{
 		$this->admins->delete_valid_department($id); 
-		redirect(base_url().'index.php/admin/departments');
+		$data['redirect_url']= base_url()."index.php/admin/departments";
+		$this->load->view('help/redirect.php',$data);
 	}
 
 	/**
@@ -376,9 +420,10 @@ class Admin extends CI_Controller
 		$data['pages']=$this->pagination->create_links();
 
 		// Load Views
-		$this->load->view('inc/header.inc.php'); 
-		$this->load->view('donations', $data);
-		$this->load->view('inc/footer.inc.php'); 
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/donations/view_all.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 
 	}
 	
@@ -390,16 +435,23 @@ class Admin extends CI_Controller
 			$donation_amount = $_POST['donation_amount'];
 			$payment_type = $_POST['payment_type'];
 			$donation_date = $_POST['donation_date'];
+
 			$this->admins->add_donations($student_id,$donation_amount, $payment_type, $donation_date);
+			$data['redirect_url']= base_url()."index.php/admin/donations";
+			$this->load->view('help/redirect.php', $data);
+
 			//redirect(base_url().'index.php/admin/donations/');
-		}
-		else {
+		} else {
+		
 			$data['valid_payment_type']=$this->admins->get_payment_types();
 			$data['alumni']=$this->admins->get_alumnus($id);
-			$this->load->view('inc/header.inc.php');
-			$this->load->view('add_donation', $data);
-			$this->load->view('inc/footer.inc.php');
+
+			$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/donations/add.php',$data);
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
 		}
+		
 	}
 
 	/**
@@ -435,9 +487,10 @@ class Admin extends CI_Controller
 		$data['alumni']=$this->admins->alumni_search($q, $department, $degree, $graduation_year, 5 , $start);
 
 
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('dashboard', $data);
-		$this->load->view('inc/footer.inc.php');
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/dashboard.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 	}
 
 	/**

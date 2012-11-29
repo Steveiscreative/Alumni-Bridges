@@ -18,30 +18,34 @@
 
         <section class="app-entry-actions">
                      
-            <div class="app-advanced-search hide">
+            <div class="app-advanced-search clearfix <?php if(!$_GET) { ?> hide <?php }?>">
                 <h3>Advanced Search</h3>
                 <form action="<?=base_url()?>index.php/admin/search/" method="GET">
+                    <div class="col">
+                        <?php if($_GET) {  ?>
+                        <fieldset>
+                            <label for="q">Current Search</label>
+                            <input type="text" name="q" value="<?php if(isset($_GET['q']))   { echo $_GET['q']; }?>">
+                        </fieldset>
+                        <?php } ?>
+                        <fieldset>
+                             <label for="graduation_year">Gradution Year</label>
+                             <input type="text" name="graduation_year" value="">
+                        </fieldset>
+                    </div>
+                    <div class="col">
+                        <fieldset>
+                            <label for="department">Department</label> 
+                            <input type="text" name="department" value="">
+                        </fieldset>
+                        
+                        <fieldset>
+                            <label for="degree">Degree</label> 
+                            <input type="text" name="degree" value="">
+                        </fieldset>
 
-                    <fieldset>
-                        <input type="text" name="q" value="<?php if(isset($_GET['q']))   { echo $_GET['q']; }?>">
-                    </fieldset>
-
-                    <fieldset>
-                         <label for="graduation_year">Gradution Year</label>
-                         <input type="text" name="graduation_year" value="">
-                    </fieldset>
-                   
-                    <fieldset>
-                        <label for="department">Department</label> 
-                        <input type="text" name="department" value="">
-                    </fieldset>
-                    
-                    <fieldset>
-                        <label for="degree">Degree</label> 
-                        <input type="text" name="degree" value="">
-                    </fieldset>
-
-                    <input type="submit" class="btn" value="Advanced Search">
+                        <input type="submit" class="btn" value="Advanced Search">
+                    </div>
                 </form>
             </div>
         </section>
@@ -122,13 +126,15 @@
                 </tbody>
             </table>
             <div class="pagination">
-                 <?=$pages?>
+                <?php if (!$_GET): ?>
+                    <?=$pages?>
+                <?php endif ?>
             </div>
         </section>
 
         <footer>
             <small>
-               Alumni Bridges &copy; 2012
+                 Steven Stephenson &copy; 2012 | Alumni Bridges
             </small>
         </footer>
 

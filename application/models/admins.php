@@ -119,7 +119,7 @@ class Admins extends CI_Model
 		$this->load->helper('array');
 		$query=$this->db->query("CALL sp_add_admin('$email', '$first_name', '$last_name', '$pwd', $role)");
 		$row = $query->row_array();
-		echo random_element($row);
+		return random_element($row);
 	}
 
 	function update_admin($id,$data)
@@ -163,7 +163,7 @@ class Admins extends CI_Model
 		$this->load->helper('array');	
 		$query=$this->db->query("CALL sp_add_donations($student_id, '$donation_amount', '$payment_type', '$date_donated')");
 		$row = $query->row_array();
-		echo random_element($row);
+		return random_element($row);
 	}
 
 	function get_payment_types()
@@ -195,14 +195,20 @@ class Admins extends CI_Model
 		$this->load->helper('array');
 		$query = $this->db->query("CALL sp_add_valid_degree('$degree')");
 		$row = $query->row_array();
-		echo random_element($row);
+		return random_element($row);
+	}
+
+	function update_degree($id,$data)
+	{
+		$this->db->where('id', $id); 
+		$this->db->update('valid_degrees',$data);
 	}
 
 	function delete_valid_degree($id)
 	{
 		$this->db->query("DELETE FROM valid_degrees WHERE id = $id");
 	}
-
+	
 	/**
 	 * Department Models
 	 * ---------------------------------------
@@ -218,7 +224,7 @@ class Admins extends CI_Model
 		$this->load->helper('array');
 		$query = $this->db->query("CALL sp_delete_valid_department('$department')");
 		$row = $query->row_array();
-		$message =random_element($row); 
+		return random_element($row); 
 	}
 
 	function get_valid_departments()
@@ -255,24 +261,20 @@ class Admins extends CI_Model
 		 */
 		
 		$this->db->like("CONCAT(first_name, ' ', last_name)",$q);
+		$this->db->or_like("student_id",$q);
 
-		if($degree !== NULL)
-		{
+		if($degree !== NULL) {
 			$this->db->where('degree', $degree);
 		}
 
-		if($department !== NULL)
-		{
+		if($department !== NULL) {
 			$this->db->where('department', $department);
 		}
 
-		if($graduation_year !== NULL)
-		{
+		if($graduation_year !== NULL) { 
 			$this->db->where('graduation_year', $graduation_year);
 		}
-		
-		
-		//$this->db->limit($num,$start);
+
 		$query = $this->db->get('alumni');
 		return $query->result_array(); 
 	}
@@ -304,7 +306,23 @@ class Admins extends CI_Model
 
 		$query = $this->db->get();
 		return $query->result_array(); 
+	}
 
+	/**
+	 * Roles
+	 * ---------------------------------------
+	 */
+	
+	function get_roles() 
+	{
+		$query=$this->db->query("SELECT * FROM role");
+		return $query->result_array();
+	}
+	
+	function get_user_role($id)
+	{
+		$query = $this->db->query("SELECT * FROM admin WHERE id = $id");
+		return $query->first_row('array');
 	}
 } 
 ?>

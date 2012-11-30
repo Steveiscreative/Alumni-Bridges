@@ -161,11 +161,12 @@ class Admin extends CI_Controller
 			$this->load->view('admin_views/layout/sidebar.php');
 			$this->load->view('admin_views/layout/footer.php');
 	}
-	//http://ellislab.com/codeigniter/user-guide/libraries/file_uploading.html
+	// http://ellislab.com/codeigniter/user-guide/libraries/file_uploading.html
 	function mass_import()
 	{
 		$data['success']=0;
         $this->load->library('csvreader');
+        
         $config['upload_path'] = './csv/';
 		$config['allowed_types'] = 'csv';
 		$config['max_size']	= '10000';

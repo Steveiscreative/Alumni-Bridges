@@ -103,6 +103,23 @@
                     <label for="telephone"> Telephone:  </label>
                     <input type="text" name="telephone"  value="<?=$alumni['telephone']?>">
                 </fieldset>
+                
+                <h3>Social Media</h3>
+                
+                <?php foreach ($valid_social_media as $row): 
+                    $rowLower = strtolower($row['social_media']);
+                    $rowTableName = str_replace(' ', '_', $rowLower);
+                ?>
+                    <?php foreach ($socialMedia as $socialRow): ?>
+                          <fieldset>
+                            <label for="<?=$rowTableName?>"> <?=$row['social_media']?></label>
+                            <input type="text" name="<?=$rowTableName?>" value="<?=$socialRow[$rowTableName]?>">
+                        </fieldset>
+                    <?php endforeach ?>
+                  
+                    
+                <?php endforeach ?>
+                
             </div>
         </div>
         <input type="submit" class="btn" value="Update Alumni">

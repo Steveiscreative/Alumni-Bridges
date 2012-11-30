@@ -58,6 +58,7 @@ class Admins extends CI_Model
 	 * 3) Alumni Add Social Media
 	 * 
 	 */
+	
 	function get_all_social_media()
 	{
 		$query=$this->db->query("SELECT * FROM valid_social_media");
@@ -69,13 +70,18 @@ class Admins extends CI_Model
 		$ValidSM =$this->db->query("INSERT INTO valid_social_media (social_media) VALUES ('$social_media')");
 		$tableSM = strtolower($social_media);
 		$tableSM = str_replace(' ', '_', $tableSM);
-		$query=$query=$this->db->query("ALTER TABLE social_media ADD $tableSM VARCHAR(150) AFTER student_id");
+		$query=$query=$this->db->query("ALTER TABLE social_media ADD $tableSM VARCHAR(150)");
 	}
 
 	function get_alumni_social_media($student_id)
 	{
 		$query=$this->db->query("SELECT * from social_media WHERE student_id = $student_id");
 		return $query->result_array(); 
+	}
+
+	function add_alumni_social_media()
+	{
+
 	}
 
 	function delete_social_media($social_media)

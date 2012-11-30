@@ -6,6 +6,7 @@ class Admin extends CI_Controller
 	{
 		parent::__construct(); 
 		$this->load->model('admins');
+		$this->load->helper(array('form', 'url'));
 	}
 
 	function index()
@@ -75,7 +76,7 @@ class Admin extends CI_Controller
 		$data['valid_degrees']=$this->admins->get_valid_degrees();
 		if($_POST)
 		{
-			$student_id =$_POST['student_id']; 
+			$student_id=$_POST['student_id']; 
 			$first_name=$_POST['first_name'];
 			$last_name=$_POST['last_name'];
 			$address=$_POST['street'];
@@ -105,8 +106,21 @@ class Admin extends CI_Controller
 
 	function alumni_profile($id)
 	{
-		$data['success']=0; 
+		// Get Student ID
+		$query=$this->db->query("SELECT student_id FROM alumni where id = $id");
+		$data=$query->first_row('array');
+		$student_id = $data['student_id'];
 
+		// // Social Sites
+		// $socialSitesQ=$this->db->query("SELECT social_media FROM valid_social_media");
+		// $socialSites=$socialSitesQ->result_array();
+
+		// // Check For Student ID in social_media table 
+		// $socialCheckQ=$this->db->query("SELECT COUNT(1) AS check_id FROM social_media WHERE student_id = $student_id ");
+		// $sCheckResult=$socialCheckQ->first_row('array');
+		// $sCheck = $sCheckResult['check_id'];
+
+		$data['success']=0; 
 		if($_POST)
 		{	
 			$alumni_data=array(
@@ -123,13 +137,16 @@ class Admin extends CI_Controller
 				'graduation_year'=>$_POST['graduation_year']
 			);
 
-			$this->admins->update_alumni($id, $alumni_data);
+			// Social Media Arrau
+			// foreach($socialSites as $site) {
+			// 	$site["social_media"]=$_POST['$site["social_media"]'];
+			// }
+			
+
 			$data['success']=1;
-		} 
-			// Get Student ID
-			$query=$this->db->query("SELECT student_id FROM alumni where id = $id");
-			$data = $query->first_row('array');
-			$student_id = $data['student_id'];
+			$this->admins->update_alumni($id, $alumni_data);
+
+		}
 
 			// Pass Info to views
 			$data['valid_departments']=$this->admins->get_valid_departments();
@@ -143,6 +160,31 @@ class Admin extends CI_Controller
 			$this->load->view('admin_views/alumni/edit.php',$data);
 			$this->load->view('admin_views/layout/sidebar.php');
 			$this->load->view('admin_views/layout/footer.php');
+	}
+	//http://ellislab.com/codeigniter/user-guide/libraries/file_uploading.html
+	function mass_import()
+	{
+		$data['success']=0;
+        $this->load->library('csvreader');
+        $config['upload_path'] = './csv/';
+		$config['allowed_types'] = 'csv';
+		$config['max_size']	= '10000';
+		$this->load->library('upload', $config);
+
+
+			$csvFile = $_POST["alumnicsv"]; 
+			$this->upload->do_upload();
+			// $result=$this->csvreader->parse_file($csvFile);
+   //     		foreach ($result as $alumni) {
+   //     			$this->admins->add_alumni($alumni['student_id'], $alumni['first_name'],$alumni['last_name'], $alumni['address'], $alumni['city'], $alumni['state'], $alumni['zip_code'], $alumni['email'], $alumni['telephone'], $alumni['degree'], $alumni['deparment'],$alumni['graduation_year']);
+   //     		}
+       		$data['success']=1;
+
+        $this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/alumni/mass-import.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
+
 	}
 
 	function deletealumni($id)
@@ -261,25 +303,38 @@ class Admin extends CI_Controller
 	function social_media() 
 	{
 		$data['social_media']=$this->admins->get_all_social_media();
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('social_media',$data);
-		$this->load->view('inc/footer.inc.php'); 
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/social-media/view_all.php',$data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 	}
 
 	function add_socialmedia()
 	{
+		$data['success']=0;
 
 		if($_POST)
 		{
 			$social_media = $_POST['social_media'];
 			$this->admins->add_social_media($social_media);
-			redirect(base_url().'index.php/admin/social_media/');
+			//redirect(base_url().'index.php/admin/social_media/');
+			
+			$query=$this->db->query("SELECT 1 AS socialCount FROM valid_social_media where social_media = '$social_media'");
+			$data=$query->first_row('array');
+			$socialCheck = $data['socialCount'];
+
+			if ($socialCheck == 1) {
+				$data['success']=0;
+			} else {
+				$data['success']=1;
+			}
+			
 		}
-		else {
-			$this->load->view('inc/header.inc.php');
-			$this->load->view('add_socialmedia');
-			$this->load->view('inc/footer.inc.php');
-		}
+		
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/social-media/add.php', $data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 
 	}
 
@@ -523,9 +578,11 @@ class Admin extends CI_Controller
 		}
 
 		$data['email']=$this->admins->alumni_email_list($degree, $graduation_year, $zip_code);
-		$this->load->view('inc/header.inc.php');
-		$this->load->view('email', $data);
-		$this->load->view('inc/footer.inc.php');
+		$data['valid_degrees']=$this->admins->get_valid_degrees();
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/email/list.php', $data);
+		$this->load->view('admin_views/layout/sidebar.php');
+		$this->load->view('admin_views/layout/footer.php');
 	}
 
 

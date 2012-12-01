@@ -161,29 +161,43 @@ class Admin extends CI_Controller
 			$this->load->view('admin_views/layout/sidebar.php');
 			$this->load->view('admin_views/layout/footer.php');
 	}
+	
 	//http://ellislab.com/codeigniter/user-guide/libraries/file_uploading.html
+	
 	function mass_import()
 	{
 		$data['success']=0;
         $this->load->library('csvreader');
         $config['upload_path'] = './csv/';
-		$config['allowed_types'] = 'csv';
-		$config['max_size']	= '10000';
+		$config['allowed_types'] = 'text/plain|text/csv|csv|text/comma-separated-values|application/csv|application/excel|application/vnd.ms-excel|application/vnd.msexcel|text/anytext';
+		$config['max_size'] = '5000';
+		$config['file_name'] = 'upload' . time();
+
 		$this->load->library('upload', $config);
 
+		$csvFile = $_POST["userfile"]; 
 
-			$csvFile = $_POST["alumnicsv"]; 
-			$this->upload->do_upload();
-			// $result=$this->csvreader->parse_file($csvFile);
-   //     		foreach ($result as $alumni) {
-   //     			$this->admins->add_alumni($alumni['student_id'], $alumni['first_name'],$alumni['last_name'], $alumni['address'], $alumni['city'], $alumni['state'], $alumni['zip_code'], $alumni['email'], $alumni['telephone'], $alumni['degree'], $alumni['deparment'],$alumni['graduation_year']);
-   //     		}
+		if ( ! $this->upload->do_upload())
+		{
+			$error = array('error' => $this->upload->display_errors());
+
+			$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/alumni/mass-import.php',$error);
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
+		}
+		else
+		{
+			$data = array('upload_data' => $this->upload->data());
+		}
+		// 
+		// $result=$this->csvreader->parse_file($csvFile);
+		//     		foreach ($result as $alumni) {
+		//     			$this->admins->add_alumni($alumni['student_id'], $alumni['first_name'],$alumni['last_name'], $alumni['address'], $alumni['city'], $alumni['state'], $alumni['zip_code'], $alumni['email'], $alumni['telephone'], $alumni['degree'], $alumni['deparment'],$alumni['graduation_year']);
+		//     		}
+		//     		
        		$data['success']=1;
 
-        $this->load->view('admin_views/layout/header.php');
-		$this->load->view('admin_views/alumni/mass-import.php',$data);
-		$this->load->view('admin_views/layout/sidebar.php');
-		$this->load->view('admin_views/layout/footer.php');
 
 	}
 

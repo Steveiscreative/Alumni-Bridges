@@ -3,20 +3,26 @@
 
                     <header class="app-header">
                         <h1>Mass Import</h1>
-
                     </header>
 
                     <section class="app-report">
                 
+<<<<<<< HEAD
 
                         <?php echo form_open_multipart('admin/mass_import');?>
 
                         <input type="file" name="alumnicsv" size="20" />
 
+=======
+                        <?php if ($error): ?>
+                            <?=$error?>
+                        <?php endif ?>
+                        
+                        <?php echo form_open_multipart('admin/mass_import');?>
+                        <input type="file" name="userfile" size="20" />
+>>>>>>> 5ded88a74d657693d18cabb14528105137f3bddf
                         <br /><br />
-
                         <input type="submit" value="upload" />
-
                         </form>
                             <table cellpadding="0" cellspacing="0" width="100%">
                             <tr>

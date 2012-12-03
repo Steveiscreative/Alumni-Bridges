@@ -7,7 +7,7 @@
 
         <section class="app-general-space">
         <?php if ($success == 0): ?>
-             <div class="alert warning">
+            <div class="alert warning">
                 <span class="close"><i class="icon-remove"></i></span> Social Media Exists
             </div>
             <?php else: ?>

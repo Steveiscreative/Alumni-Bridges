@@ -63,6 +63,7 @@
                         <?php } ?>
                     </select>
                 </fieldset>
+                
             </section>
         </div>
         <div class="clearfix">

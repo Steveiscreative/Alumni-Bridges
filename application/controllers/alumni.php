@@ -108,7 +108,7 @@ class Alumni extends CI_Controller
 			$department = $_GET['department'];
 		}
 		
-		$data['alumni']=$this->admins->alumni_search($q, $department, $degree, $graduation_year, 5 , $start);
+		$data['alumni']=$this->alumnus->search($q, $department, $degree, $graduation_year, 5 , $start);
 
 		$this->load->view('alumni_views/layout/header.php');
 		$this->load->view('alumni_views/directory.php',$data);

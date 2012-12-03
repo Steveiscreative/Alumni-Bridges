@@ -6,8 +6,8 @@
         </header>
 
         <section class="app-general-space">
-        <?php if (!isset($alumni)) {
-            echo 'No alumni in database';
+        <?php if (!$alumni) {
+            echo 'No alumni found';
         } else { 
             foreach ($alumni as $row) { ?>
             <div class="profile">
@@ -57,8 +57,11 @@
             <?php } } ?>
 
         </section>
-        <?=$pages ?>
-
+        
+        <?php if (isset($pages)): ?>
+            <?=$pages ?>
+        <?php endif ?>
+    
         <footer>
             <small>
                Steven Stephenson &copy; 2012 | Alumni Bridges

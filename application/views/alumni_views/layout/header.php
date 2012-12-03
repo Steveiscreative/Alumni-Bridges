@@ -17,7 +17,9 @@
         <header role="banner">
             <div class="container">
                 <hgroup class="branding">
+                    <a href="<?=base_url()?>index.php/alumni/directory">
                     Alumni Bridges : <strong>Bowie State University</strong>
+                    </a>
                 </hgroup>
 
                 <nav class="main-nav">

@@ -84,6 +84,7 @@ class Alumnus extends CI_Model
 	 */
 	function search($q, $department, $degree, $graduation_year, $num=20, $start=0)
 	{
+		$this->db->join('social_media','student_id.social_media = alumni.student_id');
 		$this->db->like("CONCAT(first_name, ' ', last_name)",$q);
 		$this->db->or_like("student_id",$q);
 
@@ -99,7 +100,7 @@ class Alumnus extends CI_Model
 			$this->db->where('graduation_year', $graduation_year);
 		}
 
-		$query=$this->db->query("SELECT * FROM alumni LEFT JOIN social_media ON alumni.student_id = social_media.student_id ORDER BY $orderby $order LIMIT $start, $num");
+		$query=$this->db->get("alumni");
 		return $query->result_array(); 
 	}
 

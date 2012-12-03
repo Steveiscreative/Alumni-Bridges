@@ -1,4 +1,4 @@
- <?php 
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Admins extends CI_Model
 {	
@@ -35,6 +35,12 @@ class Admins extends CI_Model
 		$query=$this->db->query("CALL sp_add_alumni($student_id, '$first_name','$last_name','$address', '$city', '$state', '$zip_code', '$email', '$telephone', '$degree', '$deparment', '$graduation_year')");
 		$row = $query->row_array();
 		return random_element($row);
+	}
+
+	function add_alumni_massImport($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment, $graduation_year)
+	{
+		$this->db->query("CALL sp_add_alumni($student_id, '$first_name','$last_name','$address', '$city', '$state', '$zip_code', '$email', '$telephone', '$degree', '$deparment', '$graduation_year')");
+		$this->db->reconnect();
 	}
 
 	function update_alumni($id, $data)
@@ -77,11 +83,6 @@ class Admins extends CI_Model
 	{
 		$query=$this->db->query("SELECT * from social_media WHERE student_id = $student_id");
 		return $query->result_array(); 
-	}
-
-	function add_alumni_social_media()
-	{
-
 	}
 
 	function delete_social_media($social_media)
@@ -258,13 +259,6 @@ class Admins extends CI_Model
 
 	function alumni_search($q, $department, $degree, $graduation_year, $num=20, $start=0)
 	{
-		/**
-		 * SELECT * FROM alumni
-		 *	WHERE CONCAT(first_name, ' ', last_name) LIKE '%dale dod%'
-		 *	AND graduation_year = '1999'
-		 *	AND department = 'Fine Arts'
-		 *	AND degree = 'Social Science'
-		 */
 		
 		$this->db->like("CONCAT(first_name, ' ', last_name)",$q);
 		$this->db->or_like("student_id",$q);

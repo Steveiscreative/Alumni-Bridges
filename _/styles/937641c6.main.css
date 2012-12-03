@@ -1667,6 +1667,12 @@ ul.icons li .icon-large:before {
   float: left;
 }
 
+.profile {
+  padding-bottom: 1em;
+  overflow: hidden;
+  border-bottom: 1px #ccc solid;
+}
+
 /* line 14, ../../app/styles/sass/_layout.sass */
 label {
   display: block;

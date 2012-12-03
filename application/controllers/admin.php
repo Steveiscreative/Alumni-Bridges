@@ -1,4 +1,5 @@
-<?php 
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
 class Admin extends CI_Controller
 {
 	
@@ -7,30 +8,48 @@ class Admin extends CI_Controller
 		parent::__construct(); 
 		$this->load->model('admins');
 		$this->load->helper(array('form', 'url'));
+		session_start();
 	}
+
 
 	function index()
 	{
+		$this->load->library('form_validation');
 
-		$data['error']=0; 
-		if($_POST)
-		{
-			$this->load->model('user');
-			$email=$this->input->post('email', true);
-			$password=$this->input->post('password', true);
-			$user=$this->user->admin_login($email, $password);
+		// Form Validation 
+		$this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
+		$this->form_validation->set_rules('pwd','Password', 'required|min_length[6]');
 
-			if (!$user) {
-				$data['error']=1; 
-			} else {
+		$email = $this->input->post('email');
+		$password = $this->input->post('pwd');
 
-				$this->session->set_userdata('id', $user['id']);
-				$this->session->set_userdata('email', $user['email']);
-				$this->session->set_userdata('role_id', $user['role_id']);
-				redirect(base_url().'index.php/admin/dashboard');
+		if ($this->form_validation->run() !== false) {
+			$this->load->model('user'); 
+			$result = $this
+						->user
+						->verify_admin(
+							$email, 
+							$password
+						);
+
+			if( $result !== false ) 
+			{
+				$_SESSION['email'] = $email;
+				$_SESSION['role_id']= $result['role_id'];
+				$_SESSION['id'] = $result['id'];
+				redirect('admin/dashboard/');
 			}
+
 		}
-		$this->load->view('login', $data);
+
+		$this->load->view('admin_views/layout/header.php');
+		$this->load->view('admin_views/admin_login.php');
+		$this->load->view('admin_views/layout/footer.php');
+	}
+
+	function logout(){
+		session_destroy();
+		redirect(base_url().'index.php/admin/');
 	}
 
 	/**
@@ -44,6 +63,10 @@ class Admin extends CI_Controller
 	
 	function dashboard($start=0)
 	{	
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		if($_GET)
 		{
 			$orderby=$_GET['orderby'];
@@ -62,7 +85,7 @@ class Admin extends CI_Controller
 		$config['per_page']=10; 
 		$this->pagination->initialize($config); 
 		$data['pages']=$this->pagination->create_links();
-
+		
 		$this->load->view('admin_views/layout/header.php');
 		$this->load->view('admin_views/dashboard.php',$data);
 		$this->load->view('admin_views/layout/sidebar.php');
@@ -71,6 +94,10 @@ class Admin extends CI_Controller
 
 	function add_alumni()
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		$data['valid_departments']=$this->admins->get_valid_departments();
 		$data['valid_social_media']=$this->admins->get_all_social_media();
 		$data['valid_degrees']=$this->admins->get_valid_degrees();
@@ -106,6 +133,9 @@ class Admin extends CI_Controller
 
 	function alumni_profile($id)
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
 		// Get Student ID
 		$query=$this->db->query("SELECT student_id FROM alumni where id = $id");
 		$data=$query->first_row('array');
@@ -166,7 +196,11 @@ class Admin extends CI_Controller
 	
 	function mass_import()
 	{
-		$data['success']=0;
+
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
         $this->load->library('csvreader');
         $config['upload_path'] = './csv/';
 		$config['allowed_types'] = 'text/plain|text/csv|csv|text/comma-separated-values|application/csv|application/excel|application/vnd.ms-excel|application/vnd.msexcel|text/anytext';
@@ -175,7 +209,7 @@ class Admin extends CI_Controller
 
 		$this->load->library('upload', $config);
 
-		$csvFile = $_POST["userfile"]; 
+		//$csvFile = $_POST["userfile"]; 
 
 		if ( ! $this->upload->do_upload())
 		{
@@ -188,17 +222,18 @@ class Admin extends CI_Controller
 		}
 		else
 		{
-			$data = array('upload_data' => $this->upload->data());
+			$upload_data = $this->upload->data();
+			$result=$this->csvreader->parse_file($upload_data['full_path']);
+
+			foreach ($result as $alumni) {
+    			$this->admins->add_alumni_massImport($alumni['student_id'], $alumni['first_name'],$alumni['last_name'], $alumni['address'], $alumni['city'], $alumni['state'], $alumni['zip_code'], $alumni['email'], $alumni['telephone'], $alumni['degree'], $alumni['department'],$alumni['graduation_year']);
+    		}
+
+    		$this->load->view('admin_views/layout/header.php');
+			$this->load->view('admin_views/alumni/upload_success.php');
+			$this->load->view('admin_views/layout/sidebar.php');
+			$this->load->view('admin_views/layout/footer.php');
 		}
-		// 
-		// $result=$this->csvreader->parse_file($csvFile);
-		//     		foreach ($result as $alumni) {
-		//     			$this->admins->add_alumni($alumni['student_id'], $alumni['first_name'],$alumni['last_name'], $alumni['address'], $alumni['city'], $alumni['state'], $alumni['zip_code'], $alumni['email'], $alumni['telephone'], $alumni['degree'], $alumni['deparment'],$alumni['graduation_year']);
-		//     		}
-		//     		
-       		$data['success']=1;
-
-
 	}
 
 	function deletealumni($id)
@@ -215,6 +250,9 @@ class Admin extends CI_Controller
 	
 	function manage_admins($start=0)
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
 		// Get Admin Info
 		$data['admins']=$this->admins->get_admins(25, $start);
 
@@ -235,6 +273,10 @@ class Admin extends CI_Controller
 
 	function add_admin()
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		if($_POST)
 		{
 			$email = $_POST['email'];
@@ -263,7 +305,10 @@ class Admin extends CI_Controller
 
 	function admin_profile($id)
 	{	
-		
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		$this->load->helper('security');
 		$data['success']=0;  
 
@@ -316,6 +361,10 @@ class Admin extends CI_Controller
 	
 	function social_media() 
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		$data['social_media']=$this->admins->get_all_social_media();
 		$this->load->view('admin_views/layout/header.php');
 		$this->load->view('admin_views/social-media/view_all.php',$data);
@@ -359,6 +408,10 @@ class Admin extends CI_Controller
 
 	function degrees()
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		$data['valid_degrees']=$this->admins->get_valid_degrees(); 
 		$this->load->view('admin_views/layout/header.php');
 		$this->load->view('admin_views/degrees/view_all.php',$data);
@@ -368,6 +421,10 @@ class Admin extends CI_Controller
 
 	function add_degree()
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		if($_POST)
 		{
 			$degree = $_POST['degree'];
@@ -386,6 +443,10 @@ class Admin extends CI_Controller
 
 	function degree($id)
 	{	
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		$data['success'] = 0;
 
 		if($_POST) 
@@ -417,8 +478,11 @@ class Admin extends CI_Controller
 
 	function departments()
 	{
-		$data['valid_departments'] = $this->admins->get_valid_departments();
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
 
+		$data['valid_departments'] = $this->admins->get_valid_departments();
 		$this->load->view('admin_views/layout/header.php');
 		$this->load->view('admin_views/departments/view_all.php',$data);
 		$this->load->view('admin_views/layout/sidebar.php');
@@ -427,15 +491,23 @@ class Admin extends CI_Controller
 
 	function add_department()
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		$this->load->helper('array');
+
 		if($_POST)
 		{
+
 			$department=$_POST['department'];
 			$data['results']=$this->admins->add_valid_department($department);
+
 			$this->load->view('admin_views/layout/header.php');
 			$this->load->view('admin_views/departments/add.php', $data);
 			$this->load->view('admin_views/layout/sidebar.php');
 			$this->load->view('admin_views/layout/footer.php');
+			
 		}
 
 		$this->load->view('admin_views/layout/header.php');
@@ -446,6 +518,10 @@ class Admin extends CI_Controller
 
 	function department($id)
 	{	
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		$data['success'] = 0;
 
 		if($_POST) 
@@ -478,6 +554,10 @@ class Admin extends CI_Controller
 	
 	function donations($start=0)
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		$data['donations']=$this->admins->get_donations(25, $start);
 
 		// Pagination
@@ -498,6 +578,10 @@ class Admin extends CI_Controller
 	
 	function add_donation($id)
 	{
+		if (!isset($_SESSION['role_id'])) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		if($_POST)
 		{
 			$student_id = $_POST['student_id'];
@@ -530,6 +614,10 @@ class Admin extends CI_Controller
 	
 	function search($start=0)
 	{
+		if (!isset($_SESSION['role_id'])) {
+			redirect(base_url().'index.php/admin/');
+		}
+
 		$q = $_GET['q'];
 
 		if( !isset($_GET['graduation_year']) || empty($_GET['graduation_year']) )
@@ -569,6 +657,9 @@ class Admin extends CI_Controller
 	
 	function email_list()
 	{
+		if (!isset($_SESSION['role_id'])) {
+			redirect(base_url().'index.php/admin/');
+		}
 
 		if( !isset($_GET['degree']) || empty($_GET['degree']) )
 		{
@@ -593,6 +684,7 @@ class Admin extends CI_Controller
 
 		$data['email']=$this->admins->alumni_email_list($degree, $graduation_year, $zip_code);
 		$data['valid_degrees']=$this->admins->get_valid_degrees();
+
 		$this->load->view('admin_views/layout/header.php');
 		$this->load->view('admin_views/email/list.php', $data);
 		$this->load->view('admin_views/layout/sidebar.php');

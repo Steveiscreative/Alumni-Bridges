@@ -15,9 +15,9 @@ class Admin extends CI_Controller
 	function index()
 	{
 		$this->load->library('form_validation');
-
+		$data['res'] = 0;
 		// Form Validation 
-		$this->form_validation->set_rules('email', 'Email Address', 'required|valid_email');
+		$this->form_validation->set_rules('email', 'Email Address', 'required|valid_email|is_unique[admin.email]');
 		$this->form_validation->set_rules('pwd','Password', 'required|min_length[6]');
 
 		$email = $this->input->post('email');
@@ -38,12 +38,15 @@ class Admin extends CI_Controller
 				$_SESSION['role_id']= $result['role_id'];
 				$_SESSION['id'] = $result['id'];
 				redirect('admin/dashboard/');
+
+			} else {
+				$data['res'] = 1;
 			}
 
 		}
 
 		$this->load->view('admin_views/layout/header.php');
-		$this->load->view('admin_views/admin_login.php');
+		$this->load->view('admin_views/admin_login.php', $data);
 		$this->load->view('admin_views/layout/footer.php');
 	}
 
@@ -85,7 +88,7 @@ class Admin extends CI_Controller
 		$config['per_page']=10; 
 		$this->pagination->initialize($config); 
 		$data['pages']=$this->pagination->create_links();
-		
+
 		$this->load->view('admin_views/layout/header.php');
 		$this->load->view('admin_views/dashboard.php',$data);
 		$this->load->view('admin_views/layout/sidebar.php');
@@ -180,9 +183,9 @@ class Admin extends CI_Controller
 
 			// Pass Info to views
 			$data['valid_departments']=$this->admins->get_valid_departments();
+			$data['valid_degrees']=$this->admins->get_valid_degrees();
 			$data['socialMedia']=$this->admins->get_alumni_social_media($student_id);
 			$data['valid_social_media']=$this->admins->get_all_social_media();
-			$data['valid_degrees']=$this->admins->get_valid_degrees();
 			$data['alumni']=$this->admins->get_alumnus($id);
 
 			// Load Views 
@@ -191,7 +194,9 @@ class Admin extends CI_Controller
 			$this->load->view('admin_views/layout/sidebar.php');
 			$this->load->view('admin_views/layout/footer.php');
 	}
-	// http://ellislab.com/codeigniter/user-guide/libraries/file_uploading.html
+	
+	//http://ellislab.com/codeigniter/user-guide/libraries/file_uploading.html
+	
 	function mass_import()
 	{
 
@@ -200,27 +205,13 @@ class Admin extends CI_Controller
 		}
 
         $this->load->library('csvreader');
-        
         $config['upload_path'] = './csv/';
-		$config['allowed_types'] = 'csv';
-		$config['max_size']	= '10000';
+		$config['allowed_types'] = 'text/plain|text/csv|csv|text/comma-separated-values|application/csv|application/excel|application/vnd.ms-excel|application/vnd.msexcel|text/anytext';
+		$config['max_size'] = '5000';
+		$config['file_name'] = 'upload' . time();
+
 		$this->load->library('upload', $config);
 
-<<<<<<< HEAD
-
-			$csvFile = $_POST["alumnicsv"]; 
-			$this->upload->do_upload();
-			// $result=$this->csvreader->parse_file($csvFile);
-   //     		foreach ($result as $alumni) {
-   //     			$this->admins->add_alumni($alumni['student_id'], $alumni['first_name'],$alumni['last_name'], $alumni['address'], $alumni['city'], $alumni['state'], $alumni['zip_code'], $alumni['email'], $alumni['telephone'], $alumni['degree'], $alumni['deparment'],$alumni['graduation_year']);
-   //     		}
-       		$data['success']=1;
-
-        $this->load->view('admin_views/layout/header.php');
-		$this->load->view('admin_views/alumni/mass-import.php',$data);
-		$this->load->view('admin_views/layout/sidebar.php');
-		$this->load->view('admin_views/layout/footer.php');
-=======
 		//$csvFile = $_POST["userfile"]; 
 
 		if ( ! $this->upload->do_upload())
@@ -240,7 +231,6 @@ class Admin extends CI_Controller
 			foreach ($result as $alumni) {
     			$this->admins->add_alumni_massImport($alumni['student_id'], $alumni['first_name'],$alumni['last_name'], $alumni['address'], $alumni['city'], $alumni['state'], $alumni['zip_code'], $alumni['email'], $alumni['telephone'], $alumni['degree'], $alumni['department'],$alumni['graduation_year']);
     		}
->>>>>>> 5ded88a74d657693d18cabb14528105137f3bddf
 
     		$this->load->view('admin_views/layout/header.php');
 			$this->load->view('admin_views/alumni/upload_success.php');

@@ -20,7 +20,7 @@ class Alumni extends CI_Controller
 		$this->load->library('form_validation');
 
 		// Form Validation 
-		$this->form_validation->set_rules('email', 'student_id', 'required');
+		$this->form_validation->set_rules('email', 'student_id', 'required|is_unique[alumni.student_id]');
 		$this->form_validation->set_rules('pwd','Password', 'required|min_length[6]');
 
 		$email = $this->input->post('student_id');
@@ -50,6 +50,11 @@ class Alumni extends CI_Controller
 		$this->load->view('alumni_views/layout/footer.php');
 	}
 
+	function first_time()
+	{
+		
+	}
+
 	function logout(){
 		session_destroy();
 		redirect(base_url().'index.php/admin/');
@@ -57,26 +62,47 @@ class Alumni extends CI_Controller
 
 	function directory($start=0)
 	{
-		if($_GET)
+		
+		if( !isset($_GET['graduation_year']) || empty($_GET['graduation_year']) )
 		{
-			$orderby=$_GET['orderby'];
-			$order=$_GET['order']; 
+			$graduation_year = NULL;
 		} else {
-			$orderby='id';
-			$order='desc'; 
+			$graduation_year = $_GET['graduation_year'] ;
 		}
 
-		$data['alumni']=$this->alumnus->alumni(10,$start, $orderby, $order);
+		if( !isset($_GET['degree']) || empty($_GET['degree']) )
+		{
+			$degree = NULL; 
+		} else {
+			$degree = $_GET['degree'];
+		}
+		
+		if( !isset($_GET['department']) || empty($_GET['department']) )
+		{
+			$department = NULL;
+		} else {
+			$department = $_GET['department'];
+		}
+
+		$data['alumni']=$this->alumnus->alumni(10,$start, $graduation_year, $degree, $department);
 		// $data['socialMedia']=$this->admins->get_alumni_social_media($student_id);
 
 		// Pagination 
 		$this->load->library('pagination');
 		$config['base_url']=base_url().'index.php/alumni/directory';
-		$config['total_rows']=$this->alumnus->alumni_count();
+		if ($_GET) {
+			$config['total_rows']=$this->alumnus->alumniResultCount($graduation_year, $degree, $department);
+		} else {
+			$config['total_rows']=$this->alumnus->alumni_count();
+		}
+		
+
 		$config['per_page']=10; 
 		$this->pagination->initialize($config); 
 		$data['pages']=$this->pagination->create_links();
 
+		$data['valid_departments']=$this->admins->get_valid_departments();
+		$data['valid_degrees']=$this->admins->get_valid_degrees();
 		$this->load->view('alumni_views/layout/header.php');
 		$this->load->view('alumni_views/directory.php',$data);
 		$this->load->view('alumni_views/layout/sidebar.php');
@@ -109,16 +135,80 @@ class Alumni extends CI_Controller
 		}
 		
 		$data['alumni']=$this->alumnus->search($q, $department, $degree, $graduation_year, 5 , $start);
-
+		$data['valid_departments']=$this->admins->get_valid_departments();
+		$data['valid_degrees']=$this->admins->get_valid_degrees();
+		
 		$this->load->view('alumni_views/layout/header.php');
 		$this->load->view('alumni_views/directory.php',$data);
 		$this->load->view('alumni_views/layout/sidebar.php');
 		$this->load->view('alumni_views/layout/footer.php');
 	}
 
-	function alumni_profile($student_id)
+	function profile($id)
 	{
+		$data['success'] = 0;
+		// Get Student ID 
+		$query=$this->db->query("SELECT student_id FROM alumni where id = $id");
+		$data=$query->first_row('array');
+		$student_id = $data['student_id'];
 
+		$q=$this->db->query("SELECT COUNT(1) AS total from social_media where student_id = $student_id ");
+		$check=$q->first_row('array');
+		$social_check=$check['total'];
+
+		if ($_POST) {
+			
+			$alumni_data=array(
+				'first_name'=>$_POST['first_name'],
+				'last_name'=>$_POST['last_name'],
+				'street'=>$_POST['street'],
+				'city'=>$_POST['city'],
+				'state'=>$_POST['state'], 
+				'zip_code'=>$_POST['zip_code'],
+				'email'=>$_POST['email'],
+				'telephone'=>$_POST['telephone'],
+			);
+
+			/**
+			 * Check to see if social media row exist, if not insert, else update
+			 */
+			
+			if ($social_check == 0 ) {
+
+				$social_array=array(
+					'student_id'=>$student_id,
+					'twitter' =>$_POST['twitter'], 
+					'facebook'=>$_POST['facebook'], 
+					'linkedin'=>$_POST['linkedin']);
+
+				$this->alumnus->add_social_media($social_array);
+
+			} else {
+				$social_array=array(
+				'twitter' =>$_POST['twitter'], 
+				'facebook'=>$_POST['facebook'], 
+				'linkedin'=>$_POST['linkedin']
+				);
+				$this->alumnus->update_social_media($student_id, $social_array);
+			}
+			
+
+			$this->alumnus->update_alumnus($id, $alumni_data);
+			$data['success'] = 1;
+		}
+
+		
+
+		// Pass Data to View
+		$data['socialMedia']=$this->alumnus->get_alumni_social_media($student_id);
+		$data['valid_social_media']=$this->admins->get_all_social_media();
+		$data['alumni']=$this->alumnus->get_alumnus($id);
+
+		// Load Views 
+		$this->load->view('alumni_views/layout/header.php');
+		$this->load->view('alumni_views/profile.php',$data);
+		$this->load->view('alumni_views/layout/sidebar.php');
+		$this->load->view('alumni_views/layout/footer.php');
 	}
 
 }

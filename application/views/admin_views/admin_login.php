@@ -11,6 +11,12 @@
                 <?php echo validation_errors(); ?>
             </div>
         <?php endif; ?>
+        <?php if ($res == 1): ?>
+            <div class="alert warning">
+                <span class="close"><i class="icon-remove"></i></span> 
+                Email/Username is not vaild
+            </div>
+        <?php endif ?>
         
         <?php echo form_open('admin') ?>
         

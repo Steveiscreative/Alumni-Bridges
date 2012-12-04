@@ -12,6 +12,8 @@
             </div>
         <?php endif; ?>
         
+        
+        
         <?php echo form_open('alumni') ?>
         
         <fieldset>
@@ -27,9 +29,14 @@
          ?>
         </fieldset>
         
+        <div>
+            Is this your first time logging in? <a href="<?=base_url(); ?>index.php/alumni/start_here">Start Here to set your password</a>
+        </div>
+        
         <fieldset>
             <?php echo form_submit('submit', 'Login') ?>
         </fieldset>
         <?php echo form_close(); ?>
+        
     </div>
 </div>

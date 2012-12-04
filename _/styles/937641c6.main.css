@@ -1821,7 +1821,7 @@ header[role=banner] nav.main-nav ul li a {
   top: 60px;
 }
 /* line 121, ../../app/styles/sass/_layout.sass */
-#main.reports header.app-header {
+#main.reports header.app-header,#main.directory header.app-header  {
   border-bottom: solid #cccccc 1px;
 }
 /* line 123, ../../app/styles/sass/_layout.sass */
@@ -1832,6 +1832,11 @@ header[role=banner] nav.main-nav ul li a {
 /* line 127, ../../app/styles/sass/_layout.sass */
 #main.reports header.app-header .app-report-generation-options {
   width: 50%;
+  float: right;
+}
+
+#main.reports.directory header.app-header .app-report-generation-options {
+  width: 30%;
   float: right;
 }
 /* line 131, ../../app/styles/sass/_layout.sass */

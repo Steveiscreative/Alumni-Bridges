@@ -50,9 +50,60 @@ class Alumni extends CI_Controller
 		$this->load->view('alumni_views/layout/footer.php');
 	}
 
-	function first_time()
+	function firsttime()
 	{
-		
+		$this->load->library('form_validation');
+		$data['res']=0;
+		$this->form_validation->set_rules('pwd','Password', 'required|min_length[6]');
+		$this->form_validation->set_rules('verify_pwd','Verify Password', 'required|min_length[6]|matches[pwd]');
+
+		$this->form_validation->set_rules('first_name','First Name', 'required');
+		$this->form_validation->set_rules('last_name','Last Name', 'required');
+
+		$this->form_validation->set_rules('student_id','Student ID', 'required|numeric');
+
+
+		$first_name = $this->input->post('first_name');
+		$last_name = $this->input->post('last_name');
+		$student_id= $this->input->post('student_id');
+		$password= $this->input->post('pwd');
+
+
+		if ($this->form_validation->run() !== false) {
+			$this->load->model('user'); 
+
+			$result = $this
+						->user
+						->verify_firsttime_alumni(
+							$first_name, 
+							$last_name, 
+							$student_id
+						);
+
+			$pwd_array=array(
+				'pwd' => MD5($password)
+			); 
+
+			if( $result !== false ) 
+			{
+				$data['res'] = 2;
+				$this
+				->user
+				->set_password(
+					$student_id, 
+					$pwd_array
+				);
+				//redirect('alumni/');
+
+			} else {
+				$data['res'] = 1;
+			}
+
+		}
+
+		$this->load->view('alumni_views/layout/header.php');
+		$this->load->view('alumni_views/firsttime.php',$data);
+		$this->load->view('alumni_views/layout/footer.php');	
 	}
 
 	function logout(){

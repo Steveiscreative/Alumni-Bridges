@@ -30,7 +30,7 @@
         </fieldset>
         
         <div>
-            Is this your first time logging in? <a href="<?=base_url(); ?>index.php/alumni/start_here">Start Here to set your password</a>
+            Is this your first time logging in? <a href="<?=base_url(); ?>index.php/alumni/firsttime">Start Here to set your password</a>
         </div>
         
         <fieldset>

@@ -11,7 +11,13 @@
                 <?php echo validation_errors(); ?>
             </div>
         <?php endif; ?>
-        
+
+        <?php if ($res == 1): ?>
+            <div class="alert warning">
+                <span class="close"><i class="icon-remove"></i></span> 
+               Student ID/Password is not valid
+            </div>
+        <?php endif ?>
         
         
         <?php echo form_open('alumni') ?>

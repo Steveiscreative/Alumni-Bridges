@@ -70,6 +70,10 @@ class Admin extends CI_Controller
 			redirect(base_url().'index.php/admin/');
 		}
 
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		if($_GET)
 		{
 			$orderby=$_GET['orderby'];
@@ -99,6 +103,10 @@ class Admin extends CI_Controller
 	{
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
 		$data['valid_departments']=$this->admins->get_valid_departments();
@@ -139,19 +147,14 @@ class Admin extends CI_Controller
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
 		}
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		// Get Student ID
 		$query=$this->db->query("SELECT student_id FROM alumni where id = $id");
 		$data=$query->first_row('array');
 		$student_id = $data['student_id'];
-
-		// // Social Sites
-		// $socialSitesQ=$this->db->query("SELECT social_media FROM valid_social_media");
-		// $socialSites=$socialSitesQ->result_array();
-
-		// // Check For Student ID in social_media table 
-		// $socialCheckQ=$this->db->query("SELECT COUNT(1) AS check_id FROM social_media WHERE student_id = $student_id ");
-		// $sCheckResult=$socialCheckQ->first_row('array');
-		// $sCheck = $sCheckResult['check_id'];
 
 		$data['success']=0; 
 		if($_POST)
@@ -169,12 +172,6 @@ class Admin extends CI_Controller
 				'department'=>$_POST['department'],
 				'graduation_year'=>$_POST['graduation_year']
 			);
-
-			// Social Media Arrau
-			// foreach($socialSites as $site) {
-			// 	$site["social_media"]=$_POST['$site["social_media"]'];
-			// }
-			
 
 			$data['success']=1;
 			$this->admins->update_alumni($id, $alumni_data);
@@ -202,6 +199,10 @@ class Admin extends CI_Controller
 
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
         $this->load->library('csvreader');
@@ -241,6 +242,14 @@ class Admin extends CI_Controller
 
 	function deletealumni($id)
 	{
+		if (!isset($_SESSION['role_id'])) {
+			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+		
 		$this->admins->delete_alumni($id);
 		redirect(base_url().'index.php/admin/dashboard');
 	}
@@ -256,6 +265,11 @@ class Admin extends CI_Controller
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
 		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		// Get Admin Info
 		$data['admins']=$this->admins->get_admins(25, $start);
 
@@ -278,6 +292,9 @@ class Admin extends CI_Controller
 	{
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
+		}
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
 		if($_POST)
@@ -310,6 +327,10 @@ class Admin extends CI_Controller
 	{	
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
 		$this->load->helper('security');
@@ -353,6 +374,14 @@ class Admin extends CI_Controller
 
 	function deleteadmin($id)
 	{
+		if (!isset($_SESSION['role_id'])) {
+			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		$this->admins->delete_admin($id);
 		redirect(base_url().'index.php/admin/manage_admins', 'refresh');
 	}
@@ -364,6 +393,10 @@ class Admin extends CI_Controller
 	
 	function social_media() 
 	{
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
 		}
@@ -377,6 +410,14 @@ class Admin extends CI_Controller
 
 	function add_socialmedia()
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		$data['success']=0;
 
 		if($_POST)
@@ -411,8 +452,13 @@ class Admin extends CI_Controller
 
 	function degrees()
 	{
+
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
 		$data['valid_degrees']=$this->admins->get_valid_degrees(); 
@@ -426,6 +472,10 @@ class Admin extends CI_Controller
 	{
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
 		if($_POST)
@@ -450,6 +500,10 @@ class Admin extends CI_Controller
 			redirect(base_url().'index.php/admin/');
 		}
 
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		$data['success'] = 0;
 
 		if($_POST) 
@@ -469,6 +523,14 @@ class Admin extends CI_Controller
 
 	function deletedegree($id)
 	{
+		if (!isset($_SESSION['role_id'])) {
+			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		$this->admins->delete_valid_degree($id);
 		$data['redirect_url']=base_url()."index.php/admin/degrees";
 		$this->load->view('help/redirect.php',$data);
@@ -485,6 +547,10 @@ class Admin extends CI_Controller
 			redirect(base_url().'index.php/admin/');
 		}
 
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		$data['valid_departments'] = $this->admins->get_valid_departments();
 		$this->load->view('admin_views/layout/header.php');
 		$this->load->view('admin_views/departments/view_all.php',$data);
@@ -496,6 +562,10 @@ class Admin extends CI_Controller
 	{
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
 		$this->load->helper('array');
@@ -525,6 +595,10 @@ class Admin extends CI_Controller
 			redirect(base_url().'index.php/admin/');
 		}
 
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		$data['success'] = 0;
 
 		if($_POST) 
@@ -545,6 +619,14 @@ class Admin extends CI_Controller
 
 	function deletedepartment($id)
 	{
+		if (!isset($_SESSION['role_id'])) {
+			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		$this->admins->delete_valid_department($id); 
 		$data['redirect_url']= base_url()."index.php/admin/departments";
 		$this->load->view('help/redirect.php',$data);
@@ -559,6 +641,10 @@ class Admin extends CI_Controller
 	{
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
 		$data['donations']=$this->admins->get_donations(25, $start);
@@ -583,6 +669,10 @@ class Admin extends CI_Controller
 	{
 		if (!isset($_SESSION['role_id'])) {
 			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
 		if($_POST)
@@ -619,6 +709,10 @@ class Admin extends CI_Controller
 	{
 		if (!isset($_SESSION['role_id'])) {
 			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
 		$q = $_GET['q'];
@@ -662,6 +756,10 @@ class Admin extends CI_Controller
 	{
 		if (!isset($_SESSION['role_id'])) {
 			redirect(base_url().'index.php/admin/');
+		}
+
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/directory');
 		}
 
 		if( !isset($_GET['degree']) || empty($_GET['degree']) )

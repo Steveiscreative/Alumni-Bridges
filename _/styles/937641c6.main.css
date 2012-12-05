@@ -1686,13 +1686,19 @@ body.app-shell {
 
 /* line 22, ../../app/styles/sass/_layout.sass */
 header[role=banner] {
-  height: 50px;
+  height: 75px;
   color: white;
   background: #151515;
 }
 /* line 27, ../../app/styles/sass/_layout.sass */
 header[role=banner] .branding {
   float: left;
+}
+
+header[role=banner] .branding a {
+  color: #ccc;
+  font-size: 1.5em; 
+  text-decoration: none;
 }
 /* line 30, ../../app/styles/sass/_layout.sass */
 header[role=banner] nav.main-nav {

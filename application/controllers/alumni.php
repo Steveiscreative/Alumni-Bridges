@@ -18,35 +18,35 @@ class Alumni extends CI_Controller
 	function index()
 	{
 		$this->load->library('form_validation');
+		$data['res']=0;
 
 		// Form Validation 
-		$this->form_validation->set_rules('email', 'student_id', 'required|is_unique[alumni.student_id]');
+		$this->form_validation->set_rules('student_id', 'Student ID', 'required|numeric');
 		$this->form_validation->set_rules('pwd','Password', 'required|min_length[6]');
 
-		$email = $this->input->post('student_id');
+		$student_id = $this->input->post('student_id');
 		$password = $this->input->post('pwd');
 
 		if ($this->form_validation->run() !== false) {
-			$this->load->model('user'); 
 
-			$result = $this
-						->user
-						->verify_alumni(
-							$email, 
-							$password
-						);
+			$this->load->model('user');
+
+			$result=$this->user->verify_alumni($student_id, $password);
 
 			if( $result !== false ) 
 			{
-				$_SESSION['student_id'] = $email;
+				$_SESSION['student_id'] = $student_id;
+				$_SESSION['id']= $result['id'];
 				$_SESSION['role_id']= $result['role_id'];
-				redirect($base_url().'index.php/alumni/directory');
+				redirect(base_url().'index.php/alumni/directory');
+			} else {
+				$data['res'] = 1;
 			}
 
 		}
 
 		$this->load->view('alumni_views/layout/header.php');
-		$this->load->view('alumni_views/login.php');
+		$this->load->view('alumni_views/login.php', $data);
 		$this->load->view('alumni_views/layout/footer.php');
 	}
 
@@ -59,9 +59,7 @@ class Alumni extends CI_Controller
 
 		$this->form_validation->set_rules('first_name','First Name', 'required');
 		$this->form_validation->set_rules('last_name','Last Name', 'required');
-
 		$this->form_validation->set_rules('student_id','Student ID', 'required|numeric');
-
 
 		$first_name = $this->input->post('first_name');
 		$last_name = $this->input->post('last_name');
@@ -93,8 +91,6 @@ class Alumni extends CI_Controller
 					$student_id, 
 					$pwd_array
 				);
-				//redirect('alumni/');
-
 			} else {
 				$data['res'] = 1;
 			}
@@ -108,12 +104,15 @@ class Alumni extends CI_Controller
 
 	function logout(){
 		session_destroy();
-		redirect(base_url().'index.php/admin/');
+		redirect(base_url().'index.php/alumni/');
 	}
 
 	function directory($start=0)
 	{
-		
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		if( !isset($_GET['graduation_year']) || empty($_GET['graduation_year']) )
 		{
 			$graduation_year = NULL;
@@ -162,6 +161,10 @@ class Alumni extends CI_Controller
 
 	function search($start=0)
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		$q = $_GET['q'];
 
 		if( !isset($_GET['graduation_year']) || empty($_GET['graduation_year']) )
@@ -197,6 +200,14 @@ class Alumni extends CI_Controller
 
 	function profile($id)
 	{
+		if (!isset($_SESSION['role_id']) ) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
+		if ($_SESSION['id'] !== $id ) {
+			redirect(base_url().'index.php/alumni/directory');
+		}
+
 		$data['success'] = 0;
 		// Get Student ID 
 		$query=$this->db->query("SELECT student_id FROM alumni where id = $id");

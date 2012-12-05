@@ -24,23 +24,20 @@ class User extends CI_Model
 		return false;
 	}
 
-	public function verify_alumni_pwd($student_id, $password)
-	{
-		
-	}
 
 	public function verify_alumni($student_id, $password)
 	{
 		$q = $this
 				->db
 				->where('student_id', $student_id)
-				->where('pwd', $password)
+				->where('pwd', md5($password))
 				->limit(1)
 				->get('alumni');
 
 		if ($q->num_rows > 0) {
 			return $q->first_row('array');
 		}
+
 		return false;
 	}
 
@@ -60,10 +57,7 @@ class User extends CI_Model
 
 		return false;
 	}
-	function update_alumni($id, $data)
-	{
-		
-	}
+	
 	public function set_password($student_id, $password)
 	{
 		$this->db->where('student_id', $student_id);

@@ -8,7 +8,6 @@ class Alumnus extends CI_Model
 	 */
 	function alumni($num=20, $start=0, $graduation_year, $degree, $department)
 	{
-		//$query=$this->db->query("SELECT * FROM alumni LEFT JOIN social_media ON alumni.student_id = social_media.student_id ORDER BY $orderby $order LIMIT $start, $num ");
 		$this->db->select('*'); 
 		$this->db->join('social_media','alumni.student_id = social_media.student_id', 'left');
 		if($degree !== NULL) {
@@ -28,7 +27,6 @@ class Alumnus extends CI_Model
 
 	function alumniResultCount($graduation_year, $degree, $department)
 	{
-		//$query=$this->db->query("SELECT * FROM alumni LEFT JOIN social_media ON alumni.student_id = social_media.student_id ORDER BY $orderby $order LIMIT $start, $num ");
 		$this->db->select('*'); 
 		$this->db->join('social_media','alumni.student_id = social_media.student_id', 'left');
 		if($degree !== NULL) {
@@ -51,7 +49,6 @@ class Alumnus extends CI_Model
 	 */
 	function get_alumnus($id)
 	{
-		//$query = $this->db->query("SELECT * FROM alumni WHERE student_id = $student_id");
 		$this->db->select('*');
 		$this->db->join('social_media','alumni.student_id = social_media.student_id', 'left');
 		$this->db->where('alumni.id', $id);

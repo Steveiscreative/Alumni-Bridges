@@ -40,11 +40,11 @@
 
                         <section class="app-report-generation-options clear_float">
                             <h2>Custom Report</h2>
-                            <form id="report" actions method="GET">
+                            <form id="report" actions method="GET" name="reports">
                                 <div class="col">
                                     <fieldset>
                                         <label for="year">Year</label>
-                                        <input type="text" name="year">  
+                                        <input type="text" name="year" class="required">  
                                     </fieldset>
                                                                  
                                     <fieldset>
@@ -74,7 +74,7 @@
 
                                     <fieldset>
                                         <label for="department"> Department</label>
-                                        <input type="text" name="department">
+                                        <input type="date" name="department">
                                     </fieldset>
                                 </div>
                                 <input type="submit" value="Create Report">

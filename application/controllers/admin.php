@@ -1195,8 +1195,8 @@ class Admin extends CI_Controller
 			 * Redirect
 			 */
 			
-			//$data['redirect_url']= base_url()."index.php/admin/donations";
-			//$this->load->view('help/redirect.php', $data);
+			$data['redirect_url']= base_url()."index.php/admin/donations";
+			$this->load->view('help/redirect.php', $data);
 
 			
 		} else {

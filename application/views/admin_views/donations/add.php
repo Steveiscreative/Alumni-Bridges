@@ -2,7 +2,7 @@
     <div class="container"> 
 
         <header class="app-header">
-            <h1>Add Admin</h1>
+            <h1>Add Donation</h1>
         </header>
 
         <section class="app-general-space">
@@ -34,7 +34,7 @@
             <section class="col">
                 
                 <fieldset>
-                     <label for="first_name"> Student ID </label>
+                     <label for="student_id"> Student ID </label>
                      <input type="text" name="student_id" value="<?=$alumni['student_id']?>"/>
                 </fieldset>
                 
@@ -52,7 +52,7 @@
             <section class="col">
                 <fieldset>
                     <label for="donation_amount">Donation Amount</label>
-                    <input type="text" name="donation_amount">
+                    <input type="text" name="donation_amount" reqiured="reqiured">
                    
                 </fieldset>
 
@@ -67,7 +67,7 @@
                 
                  <fieldset>
                     <label for="donation_date">Donation Date </label>
-                    <input type="text" name="donation_date" placeholder="YYYY/MM/DD">
+                    <input type="date" name="donation_date" placeholder="YYYY/MM/DD">
                 </fieldset>
                 
                 <input type="submit" class="btn" value="Add Donation">

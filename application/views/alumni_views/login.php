@@ -11,6 +11,14 @@
                 <?php echo validation_errors(); ?>
             </div>
         <?php endif; ?>
+
+        <?php if ($res == 1): ?>
+            <div class="alert warning">
+                <span class="close"><i class="icon-remove"></i></span> 
+               Student ID/Password is not valid
+            </div>
+        <?php endif ?>
+        
         
         <?php echo form_open('alumni') ?>
         
@@ -27,9 +35,14 @@
          ?>
         </fieldset>
         
+        <div>
+            Is this your first time logging in? <a href="<?=base_url(); ?>index.php/alumni/firsttime">Start Here to set your password</a>
+        </div>
+        
         <fieldset>
             <?php echo form_submit('submit', 'Login') ?>
         </fieldset>
         <?php echo form_close(); ?>
+        
     </div>
 </div>

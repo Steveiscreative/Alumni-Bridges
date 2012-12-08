@@ -17,14 +17,16 @@
         <header role="banner">
             <div class="container">
                 <hgroup class="branding">
+                    <a href="<?=base_url()?>index.php/alumni/directory">
                     Alumni Bridges : <strong>Bowie State University</strong>
+                    </a>
                 </hgroup>
 
                 <nav class="main-nav">
                     <ul>
                         <?php if (isset($_SESSION['id'])): ?>
-                        <li><a href="<?=base_url()?>index.php/admin/logout">Logout | </a></li>
-                        <li><a href="<?=base_url()?>index.php/admin/admin_profile/<?php echo $_SESSION['id']; ?>">My Account</a></li>
+                        <li><a href="<?=base_url()?>index.php/alumni/logout">Logout | </a></li>
+                        <li><a href="<?=base_url()?>index.php/alumni/profile/<?php echo $_SESSION['id']; ?>">My Account</a></li>
                         <?php endif ?>
                     </ul> 
                 </nav>

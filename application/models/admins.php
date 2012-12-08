@@ -4,16 +4,20 @@ class Admins extends CI_Model
 {	
 	
 	/**
-	 * Alumni Models
-	 * ---------------------------------------
-	 * 
+	 * Get All Alumni and return as array 
 	 */
+	
 	function get_alumni($num=20, $start=0, $orderby, $order)
 	{
 		$query=$this->db->query("SELECT * FROM alumni ORDER BY $orderby $order LIMIT $start, $num ");
 		return $query->result_array();
 	}
 
+	/**
+	 * Get alumni count, 
+	 * used of pagination
+	 */
+	
 	function get_alumni_count()
 	{
 		$this->db->select('id')->from('alumni'); 
@@ -21,12 +25,21 @@ class Admins extends CI_Model
 		return $query->num_rows(); 
 	}
 
+	/**
+	 * Get single alumni information
+	 */
+	
 	function get_alumnus($id)
 	{
 		$query = $this->db->query("SELECT * FROM alumni WHERE id = $id");
 		return $query->first_row('array');
 	}
 
+	/**
+	 * Add alumni into database, 
+	 * This uses Stored procedure, sp_add_alumni
+	 * Returns stored procudure message
+	 */
 	
 	function add_alumni($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment, $graduation_year)
 	{
@@ -37,17 +50,32 @@ class Admins extends CI_Model
 		return random_element($row);
 	}
 
+	/**
+	 * Mass Alumni Import
+	 * This uses Stored procedure, sp_add_alumni
+	 * Returns stored procudure message
+	 */
+	
 	function add_alumni_massImport($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment, $graduation_year)
 	{
 		$this->db->query("CALL sp_add_alumni($student_id, '$first_name','$last_name','$address', '$city', '$state', '$zip_code', '$email', '$telephone', '$degree', '$deparment', '$graduation_year')");
 		$this->db->reconnect();
 	}
 
+	/**
+	 * Update alumni information 
+	 */
+	
 	function update_alumni($id, $data)
 	{
 		$this->db->where('id', $id); 
 		$this->db->update('alumni', $data);
 	}
+
+	/**
+	 * Delete alumni
+	 * This uses Stored procedure, sp_delete_alumni
+	 */
 
 	function delete_alumni($id)
 	{
@@ -55,14 +83,8 @@ class Admins extends CI_Model
 	}
 
 
-
 	/**
-	 * Social Media Models 
-	 * ---------------------------------------
-	 * 1) get all social media
-	 * 2) Add New Social Media Column
-	 * 3) Alumni Add Social Media
-	 * 
+	 * Get all social media in valid social media table
 	 */
 	
 	function get_all_social_media()
@@ -71,6 +93,10 @@ class Admins extends CI_Model
 		return $query->result_array(); 
 	}
 	
+	/**
+	 * Add new social media to valid_social_media 
+	 * AND add new column to social_media table
+	 */
 	function add_social_media($social_media)
 	{
 		$ValidSM =$this->db->query("INSERT INTO valid_social_media (social_media) VALUES ('$social_media')");
@@ -79,11 +105,20 @@ class Admins extends CI_Model
 		$query=$query=$this->db->query("ALTER TABLE social_media ADD $tableSM VARCHAR(150)");
 	}
 
+	/**
+	 * Get an alumni's social media rows
+	 */
+	
 	function get_alumni_social_media($student_id)
 	{
 		$query=$this->db->query("SELECT * from social_media WHERE student_id = $student_id");
 		return $query->result_array(); 
 	}
+
+	/**
+	 * Delete social media from valid_social_media table 
+	 * AND DELETE drop that column
+	 */
 
 	function delete_social_media($social_media)
 	{
@@ -94,12 +129,7 @@ class Admins extends CI_Model
 	}
 
 	/**
-	 * Admins Models
-	 * ---------------------------------------
-	 * get_admin - list all rows in admin table
-	 * add_admin - add admin to admin db, stored procedure 
-	 * delete_admin - delete admin from database 
-	 * 
+	 * GEt all admins in the admins table
 	 */
 	
 	function get_admins($num=20, $start=0)
@@ -107,19 +137,28 @@ class Admins extends CI_Model
 		$query=$this->db->query("SELECT * FROM admin LIMIT $start, $num");
 		return $query->result_array();
 	}
-
+	/**
+	 * Get count of all admin in the admin table 
+	 */
 	function get_admin_count()
 	{
 		$query=$this->db->query("SELECT * FROM admin");
 		return $query->num_rows();
 	}
 
+	/**
+	 * get admin information based on ID
+	 */
+	
 	function get_admin($id)
 	{
 		$query = $this->db->query("SELECT * FROM admin WHERE id = $id");
 		return $query->first_row('array');
 	}
 
+	/**
+	 * Add admin to database with sp_add_admin stored procedure
+	 */
 	
 	function add_admin($email, $first_name, $last_name, $pwd, $role)
 	{
@@ -129,12 +168,20 @@ class Admins extends CI_Model
 		return random_element($row);
 	}
 
+	/**
+	 * Updata admin information 
+	 */
+
 	function update_admin($id,$data)
 	{
 		$this->db->where('id', $id); 
 		$this->db->update('admin',$data);
 	}
 
+	/**
+	 * Delete admin 
+	 */
+	
 	function delete_admin($id)
 	{
 		$query = $this->db->query("CALL sp_delete_admin($id)");
@@ -142,10 +189,9 @@ class Admins extends CI_Model
 
 
 	/**
-	 * Donation Models
-	 * ---------------------------------------
+	 * Return all donations 
 	 */
-
+	
 	function get_donations($num=20, $start=0) 
 	{
 		$query = $this->db->query("
@@ -159,11 +205,20 @@ class Admins extends CI_Model
 		return $query->result_array();
 	}
 
+	/**
+	 * Get donation count
+	 */
+	
 	function get_donation_count()
 	{
 		$query= $this->db->query('SELECT id FROM alumni_donations');
 		return $query->num_rows();
 	}
+
+	/**
+	 * Add dontations into database
+	 * returns stored procedures result
+	 */
 
 	function add_donations($student_id,$donation_amount, $payment_type, $date_donated)
 	{
@@ -173,16 +228,18 @@ class Admins extends CI_Model
 		return random_element($row);
 	}
 
+	/**
+	 * Get all Payment types in valid_payment_type table
+	 */
+	
 	function get_payment_types()
 	{
 		$query=$this->db->query("SELECT * FROM valid_payment_type");
 		return $query->result_array();
 	}
 
-
 	/**
-	 * Degree Models
-	 * ---------------------------------------
+	 * Get all valid degrees in valid_degree table
 	 */
 
 	function get_valid_degrees()
@@ -191,11 +248,22 @@ class Admins extends CI_Model
 		return $query->result_array();
 	}
 
+	/**
+	 * Get valid degree
+	 * Returns row based on id
+	 */
+
 	function get_valid_degree($id)
 	{
 		$query = $this->db->query("SELECT * FROM valid_degrees WHERE id = $id");
 		return $query->first_row('array');
 	}
+
+	/**
+	 * add valid degree to valid degree table
+	 * uses sp_add_valid_degree stored procedure
+	 * returns store procedure results
+	 */
 
 	function add_valid_degree($degree)
 	{
@@ -205,11 +273,19 @@ class Admins extends CI_Model
 		return random_element($row);
 	}
 
+	/**
+	 * Update degree
+	 */
+	
 	function update_degree($id,$data)
 	{
 		$this->db->where('id', $id); 
 		$this->db->update('valid_degrees',$data);
 	}
+
+	/**
+	 * Delete valid degree
+	 */
 
 	function delete_valid_degree($id)
 	{
@@ -217,15 +293,19 @@ class Admins extends CI_Model
 	}
 	
 	/**
-	 * Department Models
-	 * ---------------------------------------
+	 * Add valid department to department table
 	 */
-
+	
 	function add_valid_department($department)
 	{
 		$this->db->query("CALL sp_add_valid_department('$department')");
 	}
 
+	/**
+	 * Delete valid department and 
+	 * return stored procedure results
+	 */
+	
 	function delete_valid_department($department)
 	{
 		$this->load->helper('array');
@@ -234,18 +314,30 @@ class Admins extends CI_Model
 		return random_element($row); 
 	}
 
+	/**
+	 * Get valid departments from valid_departments table
+	 */
+
 	function get_valid_departments()
 	{
 		$query=$this->db->query("SELECT * FROM valid_departments");
 		return $query->result_array();
 	}
 
+	/**
+	 * Return valid department where $id 
+	 */
+	
 	function get_valid_department($id)
 	{
 		$query = $this->db->query("SELECT * FROM valid_departments WHERE id = $id");
 		return $query->first_row('array');
 	}
 
+	/**
+	 * Update department
+	 */
+	
 	function update_department($id,$data)
 	{
 		$this->db->where('id', $id); 
@@ -263,14 +355,29 @@ class Admins extends CI_Model
 		$this->db->like("CONCAT(first_name, ' ', last_name)",$q);
 		$this->db->or_like("student_id",$q);
 
+		/**
+		 * If $degree is not null 
+		 *  add where clause 
+		 */
+		
 		if($degree !== NULL) {
 			$this->db->where('degree', $degree);
 		}
+
+		/**
+		 * If $department is not null 
+		 *  add where clause 
+		 */
 
 		if($department !== NULL) {
 			$this->db->where('department', $department);
 		}
 
+		/**
+		 * If $gradution_year is not null 
+		 *  add where clause 
+		 */
+		
 		if($graduation_year !== NULL) { 
 			$this->db->where('graduation_year', $graduation_year);
 		}

@@ -38,7 +38,7 @@
             <section class="col">
                <fieldset>
                      <label for="first_name"> Degree </label>
-                    <input type="text" name="degree">
+                    <input type="text" name="degree" value="<?php if($_POST) {echo $_POST['degree'];}?>">
                 </fieldset>
 
                 <input type="submit" class="btn" value="Add Degree">

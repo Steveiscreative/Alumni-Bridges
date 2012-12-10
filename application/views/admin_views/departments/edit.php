@@ -2,15 +2,26 @@
     <div class="container"> 
 
         <header class="app-header">
-            <h1>Update Degree</h1>
+            <h1>Update Department</h1>
         </header>
 
         <section class="app-general-space">
-        <?php if ($success==1) { ?>
-           <div class="alert success">
-            <span class="close"><i class="icon-remove"></i></span> Department Updated
-            </div>
-        <?php } ?>
+
+         <?php  if($_POST) { ?>
+            <?php if ($results == 'THIS DEPARTMENT DOES NOT EXISTS' || $results == 'DEPARTMENT INSERT HAS FAILED' ) { ?>
+            
+                <div class="alert warning">
+                    <span class="close"><i class="icon-remove"></i></span> <?=$results;?>
+                </div>
+                
+                <?php } else{ ?>
+                
+                    <div class="alert success">
+                        <span class="close"><i class="icon-remove"></i></span> <?=$results?>
+                    </div>
+
+                <?php } ?>
+       <?php } ?> 
                      
         <form action="<?=base_url()?>index.php/admin/department/<?=$valid_department['id']?>" method="post" id="add_department"> 
 

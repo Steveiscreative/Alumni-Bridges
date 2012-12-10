@@ -39,17 +39,17 @@
             <section class="col">
                <fieldset>
                      <label for="first_name"> First Name: </label>
-                     <input type="text" name="first_name" required/>
+                     <input type="text" name="first_name" value="<?php if($_POST) {echo $_POST['first_name'];}?>" required/>
                 </fieldset>
 
                 <fieldset>
                     <label for="last_name">Last Name: </label>
-                    <input type="text" name="last_name" required />
+                    <input type="text" name="last_name" value="<?php if($_POST) {echo $_POST['last_name'];}?>" required />
                 </fieldset>
                 
                 <fieldset>
                     <label for="email">Email </label>
-                    <input type="text" name="email" required />
+                    <input type="text" name="email" value="<?php if($_POST) {echo $_POST['email'];}?>" required />
                 </fieldset>
 
                 <fieldset>

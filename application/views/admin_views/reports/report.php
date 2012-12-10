@@ -10,7 +10,7 @@
                                 <div class="col">
                                     <fieldset>
                                         <label for="year">Year</label>
-                                        <input type="text" name="year">  
+                                        <input type="text" name="year" value="<?php if($_GET) {echo $_GET['year'];}?>">  
                                     </fieldset>
                                                                  
                                     <fieldset>
@@ -36,12 +36,12 @@
                                 <div class="col omega">
                                      <fieldset>
                                         <label for="graduation_year">Graduation Year</label>
-                                        <input type="text" name="graduation_year">
+                                        <input type="text" name="graduation_year" value="<?php if($_GET) {echo $_GET['graduation_year'];}?>">
                                     </fieldset>
 
                                     <fieldset>
                                         <label for="department"> Department</label>
-                                        <input type="text" name="department">
+                                        <input type="text" name="department" value="<?php if($_GET) {echo $_GET['department'];}?>">
                                     </fieldset>
                                 </div>
                                 <input type="submit" value="Create Report">

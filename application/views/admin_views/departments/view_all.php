@@ -2,7 +2,7 @@
     <div class="container"> 
 
         <header class="app-header">
-            <h1>Degrees</h1>
+            <h1>Departments</h1>
         </header>
 
         <section class="app-table">
@@ -10,7 +10,7 @@
               <thead>
                 <tr>
                   <th>id</th>
-                  <th>Degree</th>
+                  <th>Department</th>
                   <th></th>
                 </tr>
               </thead>

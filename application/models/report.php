@@ -27,23 +27,33 @@ class Report extends CI_Model
 	{
 		// SELECT SUM(donation_amount) FROM donations WHERE YEAR(date_donated) = $year
 		$this->load->helper('array');
-		$query=$this->db->query("SELECT SUM(donation_amount) AS donation_amount FROM donations WHERE YEAR(date_donated) = $year");
+		$query=$this->db->query("CALL sp_report_year_donation_total('$year')");
 		$row = $query->row_array();
 		return random_element($row);
 	}
 
+	/**
+	 * Get dontation count for the year
+	 */
+	
 	function total_donations_count($year)
 	{
 		$this->load->helper('array');
-		$query=$this->db->query("SELECT COUNT(donation_amount) FROM donations WHERE YEAR(date_donated) = $year");
+		$query=$this->db->query("CALL sp_report_year_count($year)");
 		$row = $query->row_array();
 		return random_element($row);
+	
 	}
+
+	/**
+	 * Get donations break down by payment type
+	 */
 
 	function payment_type_overview($year)
 	{
-		$query=$this->db->query("SELECT payment_type, SUM(donation_amount) AS total FROM donations WHERE YEAR(date_donated) = $year GROUP BY payment_type");
+		$query=$this->db->query("CALL sp_report_donations_by_type($year)");
 		return $query->result_array();
+		$this->db->reconnect();
 	}
 
 	/**
@@ -52,44 +62,38 @@ class Report extends CI_Model
 
 	function donations_by_monthly_overview($year)
 	{
-		$query=$this->db->query("SELECT MONTH(date_donated) AS month, SUM(donation_amount) AS total FROM donations WHERE YEAR(date_donated) = $year GROUP BY MONTH(date_donated)");
+		$query=$this->db->query("CALL sp_report_month_by_donations($year)");
 		return $query->result_array(); 
+		$this->db->reconnect();
 	}
+
+	/**
+	 * Get donations broken down by departments
+	 */
 	 
 	function donations_by_department_overview($year)
 	{
-		$query=$this->db->query("SELECT alumni.department, SUM(alumni.donation_total) AS total FROM alumni_donations 
-			LEFT JOIN alumni ON alumni_donations.student_id = alumni.student_id
-			LEFT JOIN donations ON alumni_donations.donation_id = donations.id
-			WHERE YEAR(date_donated) = $year GROUP BY alumni.department");
+		$query=$this->db->query("CALL sp_report_donations_by_department($year)");
 
 		return $query->result_array(); 
+		$this->db->reconnect();
 	}
 
+	/**
+	 * Donation totals by class
+	 */
+
 	function donations_by_class_overview($year) {
-		$query=$this->db->query("SELECT alumni.graduation_year, SUM(alumni.donation_total) AS total FROM alumni_donations 
-			LEFT JOIN alumni ON alumni_donations.student_id = alumni.student_id
-			LEFT JOIN donations ON alumni_donations.donation_id = donations.id
-	 		WHERE YEAR(date_donated) = $year GROUP BY alumni.graduation_year
+		$query=$this->db->query("CALL sp_report_donations_by_class($year)
 		");
 		return $query->result_array(); 
 	}
 	
 	function top_three_donators($year)
 	{
-		$query=$this->db->query("SELECT alumni.first_name, alumni.last_name, SUM(donations.donation_amount) AS total FROM alumni_donations 
-			LEFT JOIN alumni ON alumni_donations.student_id = alumni.student_id
-			LEFT JOIN donations ON alumni_donations.donation_id = donations.id
-			WHERE YEAR(donations.date_donated) = $year
-			GROUP BY alumni.student_id ORDER BY donations.donation_amount DESC 
-			LIMIT 0, 3");
+		$query=$this->db->query("CALL sp_report_top_donators($year)");
 		return $query->result_array(); 
-	}
-
-	function graduation_year_list()
-	{
-		$query=$this->db->query("SELECT DISTINCT graduation_year FROM alumni ORDER BY graduation_year ASC");
-		return $query->result_array(); 
+		$this->db->reconnect();
 	}
 
 	function report_donations_list($year, $month, $department, $graduation_year)
@@ -112,7 +116,7 @@ class Report extends CI_Model
 		if($graduation_year !== NULL ) {
 			$this->db->where('graduation_year', $graduation_year); 
 		}
-
+		$this->db->group_by('alumni.student_id');
 		$query=$this->db->get();
 		return $query->result_array();
 	}
@@ -181,10 +185,11 @@ class Report extends CI_Model
 		if($department !== NULL ) {	
 			$this->db->where('department', $department); 
 		}
+
 		if($graduation_year !== NULL ) {
 			$this->db->where('graduation_year', $graduation_year); 
 		}
-
+		$this->db->group_by('MONTH(date_donated)');
 		$query=$this->db->get();
 		return $query->result_array();	
 	}

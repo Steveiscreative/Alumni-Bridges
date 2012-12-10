@@ -14,6 +14,25 @@ class Admin extends CI_Controller
 
 	function index()
 	{
+
+		/**
+		 *  IF the session role_id isn't set, 
+		 *  THEN redirect to the login screen
+		 */
+		
+		if (isset($_SESSION['role_id']) && $_SESSION['role_id'] > 1 ) {
+			redirect(base_url().'index.php/admin/dashboard');
+		}
+
+		/**
+		 * IF the session role_id is less than or equal to 1
+		 * THEN redirect to alumni section 
+		 */
+		
+		if ($_SESSION['role_id'] <= 1) {
+			redirect(base_url().'index.php/alumni/');
+		}
+
 		/**
 		 *  This function is for login controller for the admin section of the site.
 		 *  The system
@@ -85,6 +104,7 @@ class Admin extends CI_Controller
 	 * Admin Dashboard
 	 * Controllers
 	 */
+	
 	function dashboard($start=0)
 	{	
 
@@ -268,6 +288,21 @@ class Admin extends CI_Controller
 		$student_id = $data['student_id'];
 
 		/**
+		 * Get valid department rows with the get_valid_departments() model
+		 * Get valid social media rows with the get_all_social_media() model
+		 * Get valid degrees rows with the get_valid_degrees() model
+		 * Get alumni's information
+		 * See application/models/admins.php file.
+		 */
+		
+		$data['valid_departments']=$this->admins->get_valid_departments();
+		$data['valid_degrees']=$this->admins->get_valid_degrees();
+		$data['socialMedia']=$this->admins->get_alumni_social_media($student_id);
+		$data['valid_social_media']=$this->admins->get_all_social_media();
+		$data['alumni']=$this->admins->get_alumnus($id);
+
+
+		/**
 		 * Update Alumni
 		 * Success Status
 		 */
@@ -278,45 +313,43 @@ class Admin extends CI_Controller
 		 */
 		if($_POST)
 		{	
-			$alumni_data=array(
-				'first_name'=>$_POST['first_name'],
-				'last_name'=>$_POST['last_name'],
-				'street'=>$_POST['street'],
-				'city'=>$_POST['city'],
-				'state'=>$_POST['state'], 
-				'zip_code'=>$_POST['zip_code'],
-				'email'=>$_POST['email'],
-				'telephone'=>$_POST['telephone'],
-				'degree'=>$_POST['degree'],
-				'department'=>$_POST['department'],
-				'graduation_year'=>$_POST['graduation_year']
-			);
+				$student_id = $_POST['student_id'];
+				$first_name = $_POST['first_name'];
+				$last_name = $_POST['last_name'];
+				$pwd =  $_POST['pwd'];
+				$street= $_POST['street'];
+				$city= $_POST['city'];
+				$state=$_POST['state']; 
+				$zip_code=$_POST['zip_code'];
+				$email=$_POST['email'];
+				$telephone=$_POST['telephone'];
+				$degree=$_POST['degree'];
+				$department =$_POST['department'];
+				$graduation_year =$_POST['graduation_year'];
 
 			$data['success']=1;
+
+			/**
+			 * IF PASSWORD IS EMPTY OR NOT SET = NULL 
+			 */
+			
+			if( empty($pwd) || !isset($pwd))
+			{
+				$pwd = 'NULL'; 
+			}
 
 			/**
 			 * Update alumni information with the updata_alumni model
 			 * See application/models/admins.php file.
 			 */
 			
-			$this->admins->update_alumni($id, $alumni_data);
+			$data['results']=$this->admins->update_alumni1($student_id,$first_name,$last_name, $pwd, $street, $city, $state, $zip_code, $email, $telephone, $degree, $department, $graduation_year);
 
-		}
+			//redirect(base_url().'index.php/admin/alumni_profile/'.$id);
 
-			/**
-			 * Get valid department rows with the get_valid_departments() model
-			 * Get valid social media rows with the get_all_social_media() model
-			 * Get valid degrees rows with the get_valid_degrees() model
-			 * Get alumni's information
-			 * See application/models/admins.php file.
-			 */
+		} 
+
 			
-			$data['valid_departments']=$this->admins->get_valid_departments();
-			$data['valid_degrees']=$this->admins->get_valid_degrees();
-			$data['socialMedia']=$this->admins->get_alumni_social_media($student_id);
-			$data['valid_social_media']=$this->admins->get_all_social_media();
-			$data['alumni']=$this->admins->get_alumnus($id);
-
 			/**
 			 * Load interface
 			 */
@@ -325,6 +358,7 @@ class Admin extends CI_Controller
 			$this->load->view('admin_views/alumni/edit.php',$data);
 			$this->load->view('admin_views/layout/sidebar.php');
 			$this->load->view('admin_views/layout/footer.php');
+
 	}
 	
 	
@@ -365,9 +399,10 @@ class Admin extends CI_Controller
          */
         
         $config['upload_path'] = './csv/';
-		$config['allowed_types'] = 'text/plain|text/csv|csv|text/comma-separated-values|application/csv|application/excel|application/vnd.ms-excel|application/vnd.msexcel|text/anytext';
+		$config['allowed_types'] = 'text/plain|text/csv|csv|text/comma-separated-values|application/csv|application/excel|application/vnd.ms-excel|application/vnd.msexcel|text/anytext	';
 		$config['max_size'] = '5000';
 		$config['file_name'] = 'upload' . time();
+
 		$this->load->library('upload', $config);
 
 		/**
@@ -379,6 +414,7 @@ class Admin extends CI_Controller
 		if ( ! $this->upload->do_upload() )
 		{
 			$error = array('error' => $this->upload->display_errors());
+
 			$this->load->view('admin_views/layout/header.php');
 			$this->load->view('admin_views/alumni/mass-import.php',$error);
 			$this->load->view('admin_views/layout/sidebar.php');
@@ -390,17 +426,14 @@ class Admin extends CI_Controller
 			$result=$this->csvreader->parse_file($upload_data['full_path']);
 
 			foreach ($result as $alumni) {
-    			$this->admins->add_alumni_massImport($alumni['student_id'], $alumni['first_name'],$alumni['last_name'], $alumni['address'], $alumni['city'], $alumni['state'], $alumni['zip_code'], $alumni['email'], $alumni['telephone'], $alumni['degree'], $alumni['department'],$alumni['graduation_year']);
+    		$this->admins->add_alumni_massImport($alumni['student_id'], $alumni['first_name'],$alumni['last_name'], $alumni['address'], $alumni['city'], $alumni['state'], $alumni['zip_code'], $alumni['email'], $alumni['telephone'], $alumni['degree'], $alumni['department'],$alumni['graduation_year']);
     		}
 
-    		/**
-			 * Load interface
-			 */
-			
     		$this->load->view('admin_views/layout/header.php');
 			$this->load->view('admin_views/alumni/upload_success.php');
 			$this->load->view('admin_views/layout/sidebar.php');
 			$this->load->view('admin_views/layout/footer.php');
+
 		}
 	}
 
@@ -584,7 +617,7 @@ class Admin extends CI_Controller
 			 * ELSE, update to new password
 			 */
 			
-			if(!empty($_POST['pwd'])) {
+			if(empty($_POST['pwd'])) {
 				$password = do_hash($_POST['pwd'],'md5');
 			} else { 
 				$query = $this->db->query("SELECT pwd FROM admin WHERE id = $id");
@@ -592,15 +625,14 @@ class Admin extends CI_Controller
 				$password = $data['pwd'];
 			}
 
-			$data_admin=array(
-				'email'=>$_POST['email'],
-				'first_name'=>$_POST['first_name'],
-				'last_name'=>$_POST['last_name'],
-				'pwd'=> $password,
-				'role_id'=>$_POST['role_id']
-			);
+				$email=$_POST['email'];
+				$first_name=$_POST['first_name'];
+				$last_name=$_POST['last_name'];
+				$pwd= $password;
+				$role=$_POST['role_id'];
 
-			$this->admins->update_admin($id,$data_admin);
+
+			$this->admins->update_admin($id, $email, $first_name, $last_name, $pwd, $role);
 			$data['success'] = 1;
 		}
 
@@ -873,22 +905,23 @@ class Admin extends CI_Controller
 			redirect(base_url().'index.php/alumni/');
 		}
 
-		$data['success'] = 0;
-		/**
-		 * IF $_POST set value and update into database
-		 */
-		if($_POST) 
-		{	$data=array(
-				'degree' => $_POST['degree']); 
-			$this->admins->update_degree($id,$data);
-			$data['success'] = 1;
-		}
-
 		/**
 		 * Get Current Valid of Degree based on ID
 		 */
 		
 		$data['valid_degree']=$this->admins->get_valid_degree($id);
+
+		/**
+		 * IF $_POST set value and update into database
+		 */
+		if($_POST) 
+		{	
+
+			$degree = $_POST['degree'];
+			$data['results']=$this->admins->update_degree($id,$degree);
+		}
+
+		
 
 		/**
 		 * Load interface
@@ -982,6 +1015,7 @@ class Admin extends CI_Controller
 		 *  IF the session role_id isn't set, 
 		 *  THEN redirect to the login screen
 		 */
+		$data['results'] = NULL; 
 		
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
@@ -1003,20 +1037,13 @@ class Admin extends CI_Controller
 
 			$department=$_POST['department'];
 			$data['results']=$this->admins->add_valid_department($department);
-			/**
-			 * Load interface
-			 */
-			$this->load->view('admin_views/layout/header.php');
-			$this->load->view('admin_views/departments/add.php', $data);
-			$this->load->view('admin_views/layout/sidebar.php');
-			$this->load->view('admin_views/layout/footer.php');
 		}
 
 		/**
 		 * Load interface
 		 */
 		$this->load->view('admin_views/layout/header.php');
-		$this->load->view('admin_views/departments/add.php');
+		$this->load->view('admin_views/departments/add.php', $data);
 		$this->load->view('admin_views/layout/sidebar.php');
 		$this->load->view('admin_views/layout/footer.php');
 	}
@@ -1046,15 +1073,11 @@ class Admin extends CI_Controller
 			redirect(base_url().'index.php/alumni/');
 		}
 
-		$data['success'] = 0;
-
 		if($_POST) 
 		{	
-			$data=array( 'department' => $_POST['department'] ); 
 
-			$this->admins->update_department($id,$data);
-
-			$data['success'] = 1;
+			$department = $_POST['department'];
+			$data['results']=$this->admins->update_department($id,$department);
 		}
 
 		/**
@@ -1078,28 +1101,13 @@ class Admin extends CI_Controller
 	function deletedepartment($id)
 	{
 		/**
-		 *  IF the session role_id isn't set, 
-		 *  THEN redirect to the login screen
+		 * Get department name based on ID. 
 		 */
-		
-		if (!isset($_SESSION['role_id']) ) {
-			redirect(base_url().'index.php/admin/');
-		}
+		$query = $this->db->query("SELECT department FROM valid_departments WHERE id = $id");
+		$data = $query->first_row('array');
+		$department = $data['department'];
 
-		/**
-		 * IF the session role_id is less than or equal to 1
-		 * THEN redirect to alumni section 
-		 */
-		
-		if ($_SESSION['role_id'] <= 1) {
-			redirect(base_url().'index.php/alumni/');
-		}
-
-		/**
-		 * Delete department using delete_valid_department model
-		 */
-		
-		$this->admins->delete_valid_department($id); 
+		$this->admins->delete_valid_department($department); 
 
 		/**
 		 * Redirect 
@@ -1178,6 +1186,12 @@ class Admin extends CI_Controller
 		if ($_SESSION['role_id'] <= 1) {
 			redirect(base_url().'index.php/alumni/');
 		}
+		/**
+		 * Get alumn information and payment_type information for dropdown
+		 */
+			
+		$data['valid_payment_type']=$this->admins->get_payment_types();
+		$data['alumni']=$this->admins->get_alumnus($id);
 
 		/**
 		 * IF $_POST, then set value and enter into database  
@@ -1189,29 +1203,13 @@ class Admin extends CI_Controller
 			$donation_amount = $_POST['donation_amount'];
 			$payment_type = $_POST['payment_type'];
 			$donation_date = $_POST['donation_date'];
-			$this->admins->add_donations($student_id,$donation_amount, $payment_type, $donation_date);
+			$data['results']=$this->admins->add_donations($student_id,$donation_amount, $payment_type, $donation_date);
+		} 
 
-			/**
-			 * Redirect
-			 */
-			
-			$data['redirect_url']= base_url()."index.php/admin/donations";
-			$this->load->view('help/redirect.php', $data);
-
-			
-		} else {
-
-			/**
-			 * Load interface with information alumni data and payment_type info
-			 */
-			
-			$data['valid_payment_type']=$this->admins->get_payment_types();
-			$data['alumni']=$this->admins->get_alumnus($id);
 			$this->load->view('admin_views/layout/header.php');
 			$this->load->view('admin_views/donations/add.php',$data);
 			$this->load->view('admin_views/layout/sidebar.php');
 			$this->load->view('admin_views/layout/footer.php');
-		}
 		
 	}
 

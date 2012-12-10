@@ -22,7 +22,7 @@
                      <script>
                         setTimeout(function () {
                            window.location.href = "<?=base_url()?>index.php/admin/donations/"; 
-                        }, 2000); 
+                        }, 10000); 
                     </script>
             <?php } ?>
        <?php } ?> 
@@ -52,7 +52,7 @@
             <section class="col">
                 <fieldset>
                     <label for="donation_amount">Donation Amount</label>
-                    <input type="text" name="donation_amount" reqiured="reqiured">
+                    <input type="text" name="donation_amount" reqiured="reqiured"  value="<?php if($_POST) { echo $_POST['donation_amount'];} ?>">
                    
                 </fieldset>
 
@@ -67,7 +67,7 @@
                 
                  <fieldset>
                     <label for="donation_date">Donation Date </label>
-                    <input type="date" name="donation_date" placeholder="YYYY/MM/DD">
+                    <input type="date" name="donation_date" placeholder="YYYY/MM/DD" value="<?php if($_POST) { echo $_POST['donation_date']; } ?>">
                 </fieldset>
                 
                 <input type="submit" class="btn" value="Add Donation">

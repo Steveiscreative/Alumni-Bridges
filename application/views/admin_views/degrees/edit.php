@@ -6,11 +6,22 @@
         </header>
 
         <section class="app-general-space">
-        <?php if ($success==1) { ?>
-           <div class="alert success">
-            <span class="close"><i class="icon-remove"></i></span> Degree Updated
-            </div>
-        <?php } ?>
+       <?php  if($_POST) { ?>
+            <?php if ($results == 'THIS DEGREE DOES NOT EXISTS' || $results == 'DEGREE INSERT HAS FAILED' ) { ?>
+            
+                <div class="alert warning">
+                    <span class="close"><i class="icon-remove"></i></span> <?=$results;?>
+                </div>
+                
+                <?php } else{ ?>
+                
+                    <div class="alert success">
+                        <span class="close"><i class="icon-remove"></i></span> <?=$results?>
+                    </div>
+
+                <?php } ?>
+       <?php } ?> 
+                  
                      
         <form action="<?=base_url()?>index.php/admin/degree/<?=$valid_degree['id']?>" method="post" id="add_degree"> 
 

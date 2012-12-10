@@ -26,13 +26,11 @@
                         }, 2000); 
                     </script>
 
-                <?php } else { ?>
-                    <?=$results?>
-            <?php } ?>
+                <?php } ?>
        <?php } ?> 
         
         
-        <form action="<?=base_url()?>index.php/admin/add_department/" method="post" id="add_degree"> 
+        <form action="<?=base_url()?>index.php/admin/add_department/" method="post" id="add_department"> 
 
         <div class="clearfix">
             <section class="col">
@@ -41,7 +39,7 @@
                     <input type="text" name="department">
                 </fieldset>
 
-                <input type="submit" class="btn" value="Add Department">
+                <input type="submit" class="btn" value="Add Department" value="<?php if($_POST) {echo $_POST['department'];}?>">
             </section>
      
         </form>

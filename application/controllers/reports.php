@@ -19,18 +19,21 @@ class Reports extends CI_Controller
 		 *  THEN redirect to the login screen
 		 */
 		
+		/*
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
 		}
-
-		/**
+		*/
+	
+		/*
 		 * IF the session role_id is less than or equal to 1
 		 * THEN redirect to alumni section 
 		 */
-		
-		if ($_SESSION['role_id'] <= 1) {
+		/*
+		 if ($_SESSION['role_id'] <= 1) {
 			redirect(base_url().'index.php/alumni/');
 		}
+		*/
 
 		/**
 		 * Get the current year
@@ -41,13 +44,16 @@ class Reports extends CI_Controller
 		$getCurrentYear = date("Y"); 
 
 		$data['year']= $getCurrentYear; 
-		$data['donation_total']=$this->report->total_donations_amount($getCurrentYear); 
+		
+		
 		$data['donation_count']=$this->report->total_donations_count($getCurrentYear); 
 		$data['payment_type_overview']=$this->report->payment_type_overview($getCurrentYear); 
-		$data['monthly_overview']=$this->report->donations_by_monthly_overview($getCurrentYear);
+		
 		$data['top_donators']=$this->report->top_three_donators($getCurrentYear); 
 		$data['department_donations']=$this->report->donations_by_department_overview($getCurrentYear); 
 		$data['class_donations']=$this->report->donations_by_class_overview($getCurrentYear);
+		$data['monthly_overview']=$this->report->donations_by_monthly_overview($getCurrentYear);
+		$data['donation_total']=$this->report->total_donations_amount($getCurrentYear);
 
 		// Load Views 
 		$this->load->view('admin_views/layout/header.php');
@@ -69,18 +75,21 @@ class Reports extends CI_Controller
 		 *  THEN redirect to the login screen
 		 */
 		
+		/*
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
 		}
-
-		/**
+		*/
+	
+		/*
 		 * IF the session role_id is less than or equal to 1
 		 * THEN redirect to alumni section 
 		 */
-		
-		if ($_SESSION['role_id'] <= 1) {
+		/*
+		 if ($_SESSION['role_id'] <= 1) {
 			redirect(base_url().'index.php/alumni/');
 		}
+		*/
 
 		if($_GET)
 		{

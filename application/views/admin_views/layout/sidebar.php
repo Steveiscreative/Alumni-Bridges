@@ -46,24 +46,27 @@
                         <span class="mini-nav-item hide"><i class="icon-book"></i></span>
                     </a>
                 </li>
+                <!-- 
                 <li>
                     <a href="<?=base_url()?>index.php/">
                         <span class="full-width-nav-item show">Payment Types</span>
                         <span class="mini-nav-item hide"><i class="icon-credit-card"></i></span>
                     </a>
                 </li>
+                --> 
                 <li>
                     <a href="<?=base_url()?>index.php/admin/social_media">
                         <span class="full-width-nav-item show">Social Media</span>
                         <span class="mini-nav-item hide"><i class="icon-twitter"></i></span>
                     </a>
                 </li>
+                <!-- 
                 <li>
                     <a href="<?=base_url()?>index.php/">
                         <span class="full-width-nav-item show">Roles</span>
                         <span class="mini-nav-item hide"><i class="icon-tasks"></i></span>
                     </a>
-                </li>
+                </li> -->
                
 
             </ul>

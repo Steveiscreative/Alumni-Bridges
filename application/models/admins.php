@@ -58,20 +58,25 @@ class Admins extends CI_Model
 	
 	function add_alumni_massImport($student_id, $first_name,$last_name,$address, $city, $state, $zip_code, $email, $telephone, $degree, $deparment, $graduation_year)
 	{
-		$this->db->query("CALL sp_add_alumni($student_id, '$first_name','$last_name','$address', '$city', '$state', '$zip_code', '$email', '$telephone', '$degree', '$deparment', '$graduation_year')");
+		$this->load->helper('array');
+		$query=$this->db->query("CALL sp_add_alumni($student_id, '$first_name','$last_name','$address', '$city', '$state', '$zip_code', '$email', '$telephone', '$degree', '$deparment', '$graduation_year')");
+		$row = $query->row_array();
+		return random_element($row);
 		$this->db->reconnect();
 	}
 
 	/**
 	 * Update alumni information 
 	 */
-	
-	function update_alumni($id, $data)
-	{
-		$this->db->where('id', $id); 
-		$this->db->update('alumni', $data);
-	}
 
+	function update_alumni1($student_id,$first_name,$last_name, $pwd, $street, $city, $state, $zip_code, $email, $telephone, $degree, $deparment, $graduation_year ) 
+	{
+		$this->load->helper('array');
+		$query=$this->db->query("CALL sp_update_alumni($student_id, '$first_name','$last_name','$pwd','$street', '$city', '$state', '$zip_code', '$email', '$telephone', '$degree', '$deparment', '$graduation_year')");
+		$row = $query->row_array();
+		return random_element($row);
+		$this->db->reconnect();
+	}
 	/**
 	 * Delete alumni
 	 * This uses Stored procedure, sp_delete_alumni
@@ -172,10 +177,12 @@ class Admins extends CI_Model
 	 * Updata admin information 
 	 */
 
-	function update_admin($id,$data)
+	function update_admin($id, $email, $first_name, $last_name, $pwd, $role)
 	{
-		$this->db->where('id', $id); 
-		$this->db->update('admin',$data);
+		$this->load->helper('array');
+		$query=$this->db->query("CALL sp_update_admin($id, '$email', '$first_name', '$last_name', '$pwd', $role)");
+		$row = $query->row_array();
+		return random_element($row);
 	}
 
 	/**
@@ -246,6 +253,7 @@ class Admins extends CI_Model
 	{
 		$query=$this->db->query("SELECT * FROM valid_degrees");
 		return $query->result_array();
+		$this->db->reconnect();
 	}
 
 	/**
@@ -277,10 +285,12 @@ class Admins extends CI_Model
 	 * Update degree
 	 */
 	
-	function update_degree($id,$data)
+	function update_degree($id,$degree)
 	{
-		$this->db->where('id', $id); 
-		$this->db->update('valid_degrees',$data);
+		$this->load->helper('array');
+		$query=$this->db->query("CALL sp_update_valid_degree($id,'$degree')");
+		$row = $query->row_array();
+		return random_element($row); 
 	}
 
 	/**
@@ -298,7 +308,10 @@ class Admins extends CI_Model
 	
 	function add_valid_department($department)
 	{
-		$this->db->query("CALL sp_add_valid_department('$department')");
+		$this->load->helper('array');
+		$query=$this->db->query("CALL sp_add_valid_department('$department')");
+		$row = $query->row_array();
+		return random_element($row); 
 	}
 
 	/**
@@ -308,10 +321,7 @@ class Admins extends CI_Model
 	
 	function delete_valid_department($department)
 	{
-		$this->load->helper('array');
-		$query = $this->db->query("CALL sp_delete_valid_department('$department')");
-		$row = $query->row_array();
-		return random_element($row); 
+		$this->db->query("CALL sp_delete_valid_department('$department')");
 	}
 
 	/**
@@ -322,6 +332,7 @@ class Admins extends CI_Model
 	{
 		$query=$this->db->query("SELECT * FROM valid_departments");
 		return $query->result_array();
+		$this->db->reconnect();
 	}
 
 	/**
@@ -338,10 +349,12 @@ class Admins extends CI_Model
 	 * Update department
 	 */
 	
-	function update_department($id,$data)
+	function update_department($id,$department)
 	{
-		$this->db->where('id', $id); 
-		$this->db->update('valid_departments',$data);
+		$this->load->helper('array');
+		$query=$this->db->query("CALL sp_update_valid_department($id,'$department')");
+		$row = $query->row_array();
+		return random_element($row); 
 	}
 
 	/**

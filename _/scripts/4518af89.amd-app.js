@@ -100,7 +100,8 @@ $('.close').on('click', function(){
                     first_name: "required",
                     last_name: "required",
 					donation_amount: {
-						required: true
+						required: true,
+						number: true
 					},
 					donation_date: "required"
                 },
@@ -118,7 +119,12 @@ $('.close').on('click', function(){
 					student_id: "required",
                     first_name: "required",
                     last_name: "required",
-					zip_code: 'digits',
+					zip_code: {
+						digits: true
+					},
+					graduation_year: {
+						number: true
+					},
 					email: {
 						email: true,
 						required: true
@@ -128,6 +134,56 @@ $('.close').on('click', function(){
                 messages: {
                     first_name: "Please enter first name",
                     last_name: "Please enter last name"
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+			$("#edit_alumni").validate({
+                rules: {
+					student_id: "required",
+                    first_name: "required",
+                    last_name: "required",
+					zip_code: {
+						digits: true
+					},
+					graduation_year: {
+						number: true
+					},
+					email: {
+						email: true,
+						required: true
+					},
+
+                },
+                messages: {
+                    first_name: "Please enter first name",
+                    last_name: "Please enter last name"
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+			$("#add_department").validate({
+                rules: {
+					department: "required",
+                },
+                messages: {
+					department : "Pleass enter in department name"
+                },
+                submitHandler: function(form) {
+                    form.submit();
+                }
+            });
+
+			$("#add_degree").validate({
+                rules: {
+					degree: "required",
+                },
+                messages: {
+					degree : "Pleass enter in degree name"
                 },
                 submitHandler: function(form) {
                     form.submit();

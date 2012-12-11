@@ -25,6 +25,10 @@ class Alumnus extends CI_Model
 		return $query->result_array();
 	}
 
+	/*
+		Count all results
+	 */
+
 	function alumniResultCount($graduation_year, $degree, $department)
 	{
 		$this->db->select('*'); 
@@ -73,7 +77,7 @@ class Alumnus extends CI_Model
 	}
 
 	/**
-	 * [get_alumni_social_media description]
+	 * Get Social Media that belong to alumni with alumni_id
 	 */
 	function get_alumni_social_media($student_id)
 	{

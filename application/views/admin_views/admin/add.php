@@ -27,7 +27,7 @@
                      <script>
                         setTimeout(function () {
                            window.location.href = "<?=base_url()?>index.php/admin/manage_admins/"; 
-                        }, 2000); 
+                        }, 10000); 
                     </script>
             <?php } ?>
        <?php } ?> 

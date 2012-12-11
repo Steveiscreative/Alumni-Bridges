@@ -6,13 +6,25 @@
         </header>
 
         <section class="app-general-space">    
-        <?php if ($_POST): ?>
-            <?php if ($success == 1): ?>
-                <div class="alert success">
-                    <span class="close"><i class="icon-remove"></i></span> Admin has been updated
+        <?php  if($_POST) { ?>
+            <?php if ($results == 'ADMIN ID DOES NOT EXISTS' ) { ?>
+            
+                <div class="alert warning">
+                    <span class="close"><i class="icon-remove"></i></span> <?=$results;?>
                 </div>
-            <?php endif; ?>
-        <?php endif; ?>
+                
+                <?php } else if( $results == 'NOT A VALID ROLE FOR ADMIN' ){ ?>
+                
+                    <div class="alert warning">
+                        <span class="close"><i class="icon-remove"></i></span> <?=$results?>
+                    </div>
+                    
+                <?php } else { ?>
+                    <div class="alert success">
+                        <span class="close"><i class="icon-remove"></i></span> <?=$results?>
+                    </div>
+            <?php } ?>
+       <?php } ?> 
         
         <form action="<?=base_url()?>index.php/admin/admin_profile/<?=$admin['id']?>" method="post" id="update_admin"> 
         <div class="clearfix">

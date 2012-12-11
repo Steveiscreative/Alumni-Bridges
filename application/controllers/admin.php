@@ -14,25 +14,6 @@ class Admin extends CI_Controller
 
 	function index()
 	{
-
-		/**
-		 *  IF the session role_id isn't set, 
-		 *  THEN redirect to the login screen
-		 */
-		
-		if (isset($_SESSION['role_id']) && $_SESSION['role_id'] > 1 ) {
-			redirect(base_url().'index.php/admin/dashboard');
-		}
-
-		/**
-		 * IF the session role_id is less than or equal to 1
-		 * THEN redirect to alumni section 
-		 */
-		
-		if ($_SESSION['role_id'] <= 1) {
-			redirect(base_url().'index.php/alumni/');
-		}
-
 		/**
 		 *  This function is for login controller for the admin section of the site.
 		 *  The system
@@ -402,7 +383,6 @@ class Admin extends CI_Controller
 		$config['allowed_types'] = 'text/plain|text/csv|csv|text/comma-separated-values|application/csv|application/excel|application/vnd.ms-excel|application/vnd.msexcel|text/anytext	';
 		$config['max_size'] = '5000';
 		$config['file_name'] = 'upload' . time();
-
 		$this->load->library('upload', $config);
 
 		/**
@@ -632,7 +612,7 @@ class Admin extends CI_Controller
 				$role=$_POST['role_id'];
 
 
-			$this->admins->update_admin($id, $email, $first_name, $last_name, $pwd, $role);
+			$data['results']=$this->admins->update_admin($id, $email, $first_name, $last_name, $pwd, $role);
 			$data['success'] = 1;
 		}
 
@@ -760,19 +740,7 @@ class Admin extends CI_Controller
 		{
 			$social_media = $_POST['social_media'];
 			$this->admins->add_social_media($social_media);
-			/**
-			 * IF the 
-			 */
-			$query=$this->db->query("SELECT 1 AS socialCount FROM valid_social_media where social_media = '$social_media'");
-			$data=$query->first_row('array');
-			$socialCheck = $data['socialCount'];
-
-			if ($socialCheck == 1) {
-				$data['success']=0;
-			} else {
-				$data['success']=1;
-			}
-			
+			$data['success']=1;
 		}
 
 		/**
@@ -980,18 +948,18 @@ class Admin extends CI_Controller
 		 *  THEN redirect to the login screen
 		 */
 		
-		if (!isset($_SESSION['role_id']) ) {
-			redirect(base_url().'index.php/admin/');
-		}
+		// if (!isset($_SESSION['role_id']) ) {
+		// 	redirect(base_url().'index.php/admin/');
+		// }
 
 		/**
 		 * IF the session role_id is less than or equal to 1
 		 * THEN redirect to alumni section 
 		 */
 		
-		if ($_SESSION['role_id'] <= 1) {
-			redirect(base_url().'index.php/alumni/');
-		}
+		// if ($_SESSION['role_id'] <= 1) {
+		// 	redirect(base_url().'index.php/alumni/');
+		// }
 
 		/**
 		 * Get all departments using the get_valid_departments
@@ -1060,18 +1028,18 @@ class Admin extends CI_Controller
 		 *  THEN redirect to the login screen
 		 */
 		
-		if (!isset($_SESSION['role_id']) ) {
-			redirect(base_url().'index.php/admin/');
-		}
+		// if (!isset($_SESSION['role_id']) ) {
+		// 	redirect(base_url().'index.php/admin/');
+		// }
 
 		/**
 		 * IF the session role_id is less than or equal to 1
 		 * THEN redirect to alumni section 
 		 */
 		
-		if ($_SESSION['role_id'] <= 1) {
-			redirect(base_url().'index.php/alumni/');
-		}
+		// if ($_SESSION['role_id'] <= 1) {
+		// 	redirect(base_url().'index.php/alumni/');
+		// }
 
 		if($_POST) 
 		{	

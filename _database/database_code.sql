@@ -201,6 +201,94 @@ START TRANSACTION;
 END//
 
 
+## UPDATE ALUMNI ACCOUNT
+###############################################################
+
+DELIMITER //
+
+# IF PROCEDURE IF EXISTS THEN DROP
+DROP PROCEDURE IF EXISTS sp_update_alumni_account//
+
+CREATE PROCEDURE sp_update_alumni_account (
+IN     student_id     INT(20),
+IN     first_name     VARCHAR(255),
+IN     last_name      VARCHAR(255),
+IN     street         VARCHAR(255),
+IN     city           VARCHAR(255),
+IN     state          VARCHAR(2),
+IN     zip_code       VARCHAR(15),
+IN     email          VARCHAR(255),
+IN     telephone      VARCHAR(22),
+IN 	   twitter		  VARCHAR(255),
+IN     facebook		  VARCHAR(255), 
+IN 	   linkedin		  VARCHAR(255)
+)
+BEGIN
+
+#DECLARE VARIABLE
+DECLARE studentID INT(20);
+
+## DECLARE IF SQL ERRORS THEN ROLLBACK
+DECLARE EXIT HANDLER FOR SQLWARNING
+	BEGIN
+		SELECT 'ALUMNI UPDATE HAS FAILED';
+		ROLLBACK;
+	END;
+START TRANSACTION;
+	## SET VARIABLES
+	SET studentID = student_id;
+	
+	# IF STUDENT ID IS LESS THAN OR EQUAL TO ZERO ROLLBACK
+	IF student_id <= 0 THEN
+		BEGIN
+			SELECT 'NOT A VALID STUDENT ID';
+			ROLLBACK;
+		END;
+		##IF STUDENT_ID DOESN'T EXSIST IN ALUMNI TABLE ROLLBACK
+		ELSEIF NOT EXISTS (SELECT 1 FROM alumni WHERE alumni.student_id = studentID ) THEN
+			SELECT 'ALUMNI DOES NOT EXISTS';
+			ROLLBACK;
+		ELSEIF NOT EXISTS( SELECT 1 FROM social_media WHERE social_media.student_id = studentID) THEN
+		# IF student id DOESN'T EXIST IN social media AND IF ANY THE SOCIAL MEDIA VALUES ARE ARE NOT NULL THEN CREATE ROW
+			BEGIN
+				IF twitter IS NOT NULL OR facebook IS NOT NULL OR linkedin IS NOT NULL THEN
+					INSERT INTO social_media (social_media.student_id, social_media.facebook, social_media.twitter, social_media.linkedin)
+					VALUES (studentID , facebook, twitter, linkedin);
+				END IF; 
+			END;
+		ELSEIF EXISTS( SELECT 1 FROM social_media WHERE social_media.student_id = studentID) THEN 
+		## IF STUDENT DEGREE ALREADY EXIST IN social_media table THEN UPDATE
+			BEGIN 
+				UPDATE social_media SET
+				social_media.facebook = facebook, 
+				social_media.twitter = twitter, 
+				social_media.linkedin = linkedin
+				WHERE social_media.student_id = studentID; 
+			END;
+		ELSE
+		# ALUMNI UPDATE
+			BEGIN
+				SELECT 'ALUMNI INFO UPDATED';
+				UPDATE alumni SET
+				  alumni.first_name = first_name, 
+				  alumni.last_name = last_name, 
+				  alumni.street =street, 
+				  alumni.city = city, 
+				  alumni.state = state, 
+				  alumni.zip_code = zip_code, 
+				  alumni.email = email, 
+				  alumni.telephone = telephone
+				WHERE alumni.student_id =  studentID; 
+			COMMIT;
+		END; 
+	END IF;
+END//
+
+
+
+
+
+
 ## ADD ADMIN
 ###############################################################
 
@@ -298,16 +386,11 @@ BEGIN
 				ROLLBACK;
 				SELECT 'NOT A VALID ROLE FOR ADMIN';
 			END;
+		## IF ADMIN.ID DOESN'T EXIST, ROLLBACK
 		ELSEIF NOT EXISTS (SELECT 1 FROM admin WHERE admin.id = id) THEN
 			BEGIN
 				ROLLBACK;
 				SELECT 'ADMIN ID DOES NOT EXISTS';
-			END;
-		## IF ADMIN ADMIN EMAIL EXIST THEN ROLLBACK
-		ELSEIF NOT EXISTS (SELECT 1 FROM admin WHERE UPPER(admin.email) = UPPER(emailVal) ) THEN
-			BEGIN
-				ROLLBACK;
-				SELECT 'ADMIN DOES NOT EXISTS';
 			END;
 		ELSE 
 		## ADD ADMIN
@@ -357,12 +440,13 @@ BEGIN
 	## DELETE ADMIN 
 		BEGIN
 		    SELECT 'ADMIN DELETED';
-		    DELETE FROM admin WHERE admin.id = id
+		    DELETE FROM admin WHERE admin.id = id;
 			COMMIT;
 		END; 
 	END IF;
 	
 END//
+
 
 ## ADD VALID DEGREE
 ###############################################################
@@ -939,6 +1023,97 @@ BEGIN
 	END IF;
 END//
 
+## ALUMNI SET PASSWORD
+###############################################################
+DELIMITER //
+DROP PROCEDURE IF EXISTS sp_alumni_set_password //
+
+CREATE PROCEDUREsp_alumni_set_password( 
+	IN student_id INT(20), 
+	IN first_name VARCHAR(255), 
+	IN last_name VARCHAR(255)
+	IN pwd VARCHAR(64)
+)
+BEGIN
+
+	## IF SQL ERRORS ROLLBACK 
+	DECLARE EXIT HANDLER FOR SQLWARNING, SQLEXCEPTION, NOT FOUND
+	BEGIN
+		ROLLBACK;
+		SELECT 'SETTING PASSWORD HAS FAILED';
+	END;
+
+	START TRANSACTION;
+
+	## IF DEPARMENT DOESN'T EXISTS THEN ROLLBACK
+	IF (SELECT 1 from donations WHERE YEAR(date_donated) = theYear) = 0 THEN
+		BEGIN
+			SELECT 'NO DONATIONS FOR THIS YEAR';
+			ROLLBACK;
+		END; 
+	ELSE 
+	## GET DONATION GROUPED BY graduation_year
+		BEGIN
+			SELECT alumni.first_name, alumni.last_name, SUM(donations.donation_amount) AS total FROM alumni_donations 
+			LEFT JOIN alumni ON alumni_donations.student_id = alumni.student_id
+			LEFT JOIN donations ON alumni_donations.donation_id = donations.id
+			WHERE YEAR(donations.date_donated) = theYear
+			GROUP BY alumni.student_id 
+			ORDER BY donations.donation_amount DESC 
+			LIMIT 0, 3;
+		END;
+	END IF;
+END//
+
+## CURSOR TEST
+CREATE PROCEDURE processorders()
+BEGIN
+   -- Declare local variables
+   DECLARE done BOOLEAN DEFAULT 0;
+   DECLARE o INT;
+   -- Declare the cursor
+   DECLARE ordernumbers CURSOR
+   FOR
+   SELECT order_num FROM orders;
+   -- Declare continue handler
+   DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done=1;
+   -- Open the cursor
+   OPEN ordernumbers;
+   -- Loop through all rows
+   REPEAT
+      -- Get order number
+      FETCH ordernumbers INTO o;
+   -- End of loop
+   UNTIL done END REPEAT;
+   -- Close the cursor
+   CLOSE ordernumbers;
+END;
+
+###############################################################
+### GET ALUMNI 
+CREATE PROCEDURE alumniColumns()
+BEGIN
+   ## Declare local variables
+   DECLARE done BOOLEAN DEFAULT 0;
+   DECLARE o INT;
+   ## Declare the cursor
+   DECLARE alumniEntries CURSOR
+   FOR
+   SELECT * FROM alumni;
+   -- Declare continue handler
+   DECLARE CONTINUE HANDLER FOR SQLSTATE '02000' SET done=1;
+   -- Open the cursor
+   OPEN alumniEntries;
+   -- Loop through all rows
+   REPEAT
+      -- Get order number
+      FETCH alumniEntries INTO o;
+   -- End of loop
+   UNTIL done END REPEAT;
+   -- Close the cursor
+   CLOSE alumniEntries;
+END;
+
 ## TRIGGERS
 ###############################################################
 ###############################################################
@@ -978,6 +1153,7 @@ BEGIN
 	SET alumni.donation_total =  donation_total_amount + recent_donation
 	WHERE student_id = recentSID;
 END//
+
 
 
 ## INDEXES

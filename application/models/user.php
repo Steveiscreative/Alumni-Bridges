@@ -7,7 +7,9 @@ class User extends CI_Model
 
 	}
 
-
+	/**
+	 * Verify admin ins database
+	 */
 	public function verify_admin($email, $password)
 	{
 		$q = $this

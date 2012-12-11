@@ -85,7 +85,8 @@ class Alumni extends CI_Controller
 		$first_name = $this->input->post('first_name');
 		$last_name = $this->input->post('last_name');
 		$student_id= $this->input->post('student_id');
-		$password= $this->input->post('pwd');
+
+		$password=$this->input->post('pwd');
 
 
 		if ($this->form_validation->run() !== false) {
@@ -97,8 +98,7 @@ class Alumni extends CI_Controller
 							$first_name, 
 							$last_name, 
 							$student_id
-						);
-
+						);			
 			$pwd_array=array(
 				'pwd' => MD5($password)
 			); 

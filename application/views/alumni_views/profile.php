@@ -6,14 +6,30 @@
         </header>
 
         <section class="app-general-space"> 
-        <?php if ($_POST): ?>
-            <?php if ($success == 1): ?>
-                <div class="alert success">
-                    <span class="close"><i class="icon-remove"></i></span>
-                    Your Profile has been updated
+         <?php  if($_POST) { ?>
+            <?php if ($results == 'ALUMNI UPDATE HAS FAILED' ) { ?>
+            
+                <div class="alert warning">
+                    <span class="close"><i class="icon-remove"></i></span> <?=$results;?>
                 </div>
-             <?php endif ?>
-        <?php endif ?>
+                
+                <?php } else if( $results == 'NOT A VALID STUDENT ID' ){ ?>
+                
+                    <div class="alert warning">
+                        <span class="close"><i class="icon-remove"></i></span> <?=$results?>
+                    </div>
+                    
+                <?php } else { ?>
+                    <div class="alert success">
+                        <span class="close"><i class="icon-remove"></i></span> <?=$results?>
+                    </div>
+                     <script>
+                        setTimeout(function () {
+                           window.location.href = "<?=base_url()?>index.php/admin/manage_admins/"; 
+                        }, 10000); 
+                    </script>
+            <?php } ?>
+       <?php } ?> 
         
         <form action="<?=base_url()?>index.php/alumni/profile/<?=$alumni['id'] ?>" method="post" id="edit_alumni"> 
 

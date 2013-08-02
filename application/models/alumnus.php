@@ -68,12 +68,16 @@ class Alumnus extends CI_Model
 	}
 
 	/**
-	 * [update_alumni description]
+	 * Update Alumni Account
+	 * Returns store procedure message
 	 */
-	function update_alumnus($id, $data)
+	
+	function update_alumnus($student_id, $first_name, $last_name, $street, $city, $state, $zip_code, $email, $telephone, $twitter, $facebook, $linkedin)
 	{
-		$this->db->where('id', $id); 
-		$this->db->update('alumni', $data);
+		$this->load->helper('array');
+		$query=$this->db->query("CALL sp_update_alumni_account($student_id,'$first_name', '$last_name', '$street', '$city','$state','$zip_code','$email', '$telephone', '$twitter', '$facebook', '$linkedin')"); 
+		$row=$query->row_array();
+		return random_element($row);
 	}
 
 	/**
@@ -85,24 +89,7 @@ class Alumnus extends CI_Model
 		return $query->result_array(); 
 	}
 
-	function social_check($student_id){
-		$this->db->select('COUNT(1) AS total');
-		$this->db->from('social_media');
-		$this->db->where('student_id', $student_id);
-		$query=$this->db->get();
-		return $query->result_array(); 
-	}
 
-	function add_social_media($data)
-	{
-		$this->db->insert('social_media', $data);
-	}
-
-	function update_social_media($student_id, $data)
-	{
-		$this->db->where('student_id', $student_id); 
-		$this->db->update('social_media', $data);
-	}
 
 	/**
 	 * Filter
@@ -128,6 +115,7 @@ class Alumnus extends CI_Model
 	/**
 	 * Search Alumni
 	 */
+	
 	function search($q, $department, $degree, $graduation_year, $num=20, $start=0)
 	{	
 
@@ -149,6 +137,4 @@ class Alumnus extends CI_Model
 		$query=$this->db->get("alumni");
 		return $query->result_array(); 
 	}
-
-
 }

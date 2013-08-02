@@ -98,7 +98,10 @@ class Alumni extends CI_Controller
 							$first_name, 
 							$last_name, 
 							$student_id
-						);			
+						);	
+			/**
+			 * Encrypt Password
+			 */
 			$pwd_array=array(
 				'pwd' => MD5($password)
 			); 
@@ -327,46 +330,37 @@ class Alumni extends CI_Controller
 		 */
 
 		if ($_POST) {
-			$alumni_data=array(
-				'first_name'=>$_POST['first_name'],
-				'last_name'=>$_POST['last_name'],
-				'street'=>$_POST['street'],
-				'city'=>$_POST['city'],
-				'state'=>$_POST['state'], 
-				'zip_code'=>$_POST['zip_code'],
-				'email'=>$_POST['email'],
-				'telephone'=>$_POST['telephone'],
-			);
 
+				$student_id=$student_id;
+				$first_name=$_POST['first_name'];
+				$last_name=$_POST['last_name'];
+				$street=$_POST['street'];
+				$city=$_POST['city'];
+				$state=$_POST['state']; 
+				$zip_code=$_POST['zip_code'];
+				$email=$_POST['email'];
+				$telephone=$_POST['telephone'];
+				$twitter=$_POST['twitter']; 
+				$facebook=$_POST['facebook']; 
+				$linkedin=$_POST['linkedin'];
+
+				if(empty($twitter)){
+					$twitter = NULL;
+				}
+				if(empty($facebook)){
+					$facebook = NULL;
+				}
+				if(empty($linkedin)){
+					$linkedin = NULL;
+				}
+			
 			/**
-			 * Check to see if social media row exist, if not insert, else update
+			 * UPDATE ALUMNI INFORMATION 
 			 */
-			
-			if ($social_check == 0 ) {
+			$data['results']=$this->alumnus->update_alumnus($student_id, $first_name, $last_name, $street, $city, $state, $zip_code, $email, $telephone, $twitter, $facebook, $linkedin);
 
-				$social_array=array(
-					'student_id'=>$student_id,
-					'twitter' =>$_POST['twitter'], 
-					'facebook'=>$_POST['facebook'], 
-					'linkedin'=>$_POST['linkedin']);
-
-				$this->alumnus->add_social_media($social_array);
-
-			} else {
-				$social_array=array(
-				'twitter' =>$_POST['twitter'], 
-				'facebook'=>$_POST['facebook'], 
-				'linkedin'=>$_POST['linkedin']
-				);
-				$this->alumnus->update_social_media($student_id, $social_array);
-			}
-			
-
-			$this->alumnus->update_alumnus($id, $alumni_data);
-			$data['success'] = 1;
 		}
 
-		
 
 		// Pass Data to View
 		$data['socialMedia']=$this->alumnus->get_alumni_social_media($student_id);

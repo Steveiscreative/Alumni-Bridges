@@ -739,8 +739,7 @@ class Admin extends CI_Controller
 		if($_POST)
 		{
 			$social_media = $_POST['social_media'];
-			$this->admins->add_social_media($social_media);
-			$data['success']=1;
+			$data['results']=$this->admins->add_social_media($social_media);
 		}
 
 		/**

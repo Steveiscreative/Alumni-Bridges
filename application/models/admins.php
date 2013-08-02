@@ -101,13 +101,14 @@ class Admins extends CI_Model
 	/**
 	 * Add new social media to valid_social_media 
 	 * AND add new column to social_media table
+	 * this uses the sp_add_social_media stored procudure
 	 */
 	function add_social_media($social_media)
 	{
-		$ValidSM =$this->db->query("INSERT INTO valid_social_media (social_media) VALUES ('$social_media')");
-		$tableSM = strtolower($social_media);
-		$tableSM = str_replace(' ', '_', $tableSM);
-		$query=$query=$this->db->query("ALTER TABLE social_media ADD $tableSM VARCHAR(150)");
+		$this->load->helper('array');
+		$query = $this->db->query("CALL sp_add_social_media('$social_media')");
+		$row = $query->row_array();
+		return random_element($row);
 	}
 
 	/**

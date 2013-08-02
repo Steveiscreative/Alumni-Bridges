@@ -19,21 +19,20 @@ class Reports extends CI_Controller
 		 *  THEN redirect to the login screen
 		 */
 		
-		/*
+		
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
 		}
-		*/
 	
 		/*
 		 * IF the session role_id is less than or equal to 1
 		 * THEN redirect to alumni section 
 		 */
-		/*
+		
 		 if ($_SESSION['role_id'] <= 1) {
 			redirect(base_url().'index.php/alumni/');
 		}
-		*/
+		
 
 		/**
 		 * Get the current year
@@ -45,10 +44,11 @@ class Reports extends CI_Controller
 
 		$data['year']= $getCurrentYear; 
 		
-		
+		/**
+		 * Pass Information to 
+		 */
 		$data['donation_count']=$this->report->total_donations_count($getCurrentYear); 
 		$data['payment_type_overview']=$this->report->payment_type_overview($getCurrentYear); 
-		
 		$data['top_donators']=$this->report->top_three_donators($getCurrentYear); 
 		$data['department_donations']=$this->report->donations_by_department_overview($getCurrentYear); 
 		$data['class_donations']=$this->report->donations_by_class_overview($getCurrentYear);
@@ -75,21 +75,20 @@ class Reports extends CI_Controller
 		 *  THEN redirect to the login screen
 		 */
 		
-		/*
+		
 		if (!isset($_SESSION['role_id']) ) {
 			redirect(base_url().'index.php/admin/');
 		}
-		*/
 	
 		/*
 		 * IF the session role_id is less than or equal to 1
 		 * THEN redirect to alumni section 
 		 */
-		/*
+		
 		 if ($_SESSION['role_id'] <= 1) {
 			redirect(base_url().'index.php/alumni/');
 		}
-		*/
+		
 
 		if($_GET)
 		{
@@ -124,6 +123,7 @@ class Reports extends CI_Controller
 			
 			/**
 			 * Set month
+			 * NULL if not set
 			 */
 
 			if(!isset($_GET['month']) || empty($_GET['month'])){

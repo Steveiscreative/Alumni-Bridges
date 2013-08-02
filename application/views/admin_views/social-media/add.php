@@ -6,17 +6,23 @@
         </header>
 
         <section class="app-general-space">
-        <?php if ($_POST): ?>
-             <?php if ($success == 1): ?>
-              <div class="alert success">
-                <span class="close"><i class="icon-remove"></i></span> Social Media has been added
-            </div>
-            <?php else: ?>
-           <div class="alert warning">
-                <span class="close"><i class="icon-remove"></i></span> Social Media Exists
-            </div>
-            <?php endif; ?>
-        <?php endif; ?>
+
+        <?php  if($_POST) { ?>
+            <?php if ($results == 'SOCIAL MEDIA ALREADY EXISTS') { ?>
+            
+                <div class="alert warning">
+                    <span class="close"><i class="icon-remove"></i></span> <?=$results;?>
+                </div>
+                
+                <?php } else{ ?>
+                
+                    <div class="alert success">
+                        <span class="close"><i class="icon-remove"></i></span> <?=$results?>
+                    </div>
+                    
+                <?php } ?>
+            <?php } ?>
+
        
        <form action="<?=base_url()?>index.php/admin/add_socialmedia/" method="post"> 
             <fieldset>

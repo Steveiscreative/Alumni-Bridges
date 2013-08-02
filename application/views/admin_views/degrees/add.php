@@ -23,7 +23,7 @@
                     <script>
                         setTimeout(function () {
                            window.location.href = "<?=base_url()?>index.php/admin/degrees/"; 
-                        }, 2000); 
+                        }, 10000); 
                     </script>
 
                 <?php } else { ?>
